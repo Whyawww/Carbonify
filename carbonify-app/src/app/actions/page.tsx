@@ -17,11 +17,9 @@ export default function ActionsPage() {
   // State untuk menandakan proses pengambilan data
   const [loading, setLoading] = useState(true);
 
-  // useEffect akan berjalan sekali saat komponen dimuat
   useEffect(() => {
     async function fetchActions() {
       try {
-        // --- PERBAIKAN URL DI BAWAH INI ---
         const response = await fetch('http://127.0.0.1:8000/api/v1/actions/');
         if (!response.ok) {
           throw new Error('Gagal mengambil data dari server');
@@ -64,13 +62,18 @@ export default function ActionsPage() {
         />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {actions.map((action) => (
+            // Container dengan border gradasi
             <div
               key={action.id}
-              className="bg-gray-900/30 backdrop-blur-lg border border-gray-700 p-6 rounded-2xl shadow-lg hover:border-gray-500 hover:scale-105 transition-all duration-300"
+              className="p-[1px] bg-gradient-to-r from-green-400/30 to-cyan-400/30 rounded-2xl hover:from-green-400/50 hover:to-cyan-400/50 transition-all duration-300"
             >
-              <div className="text-4xl mb-4">{action.emoji}</div>
-              <h3 className="text-2xl font-bold mb-2">{action.title}</h3>
-              <p className="text-gray-400">{action.description}</p>
+                <div
+                    className="bg-gray-900/80 backdrop-blur-lg p-6 h-full rounded-2xl shadow-lg transition-all duration-300"
+                >
+                    <div className="text-4xl mb-4">{action.emoji}</div>
+                    <h3 className="text-2xl font-bold mb-2">{action.title}</h3>
+                    <p className="text-gray-400">{action.description}</p>
+                </div>
             </div>
           ))}
         </div>

@@ -26,13 +26,13 @@ export default function Home() {
           <div className="flex justify-center space-x-4">
             <Link
               href="/calculate"
-              className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full transition-colors"
+              className="bg-gradient-to-r from-green-400 to-cyan-400 hover:from-cyan-400 hover:to-green-400 text-white font-bold py-3 px-6 rounded-full transition-colors"
             >
               Hitung Jejak Karbonmu
             </Link>
             <Link
               href="/actions"
-              className="bg-transparent border border-green-500 hover:bg-green-500 hover:border-transparent text-green-500 hover:text-white font-bold py-3 px-6 rounded-full transition-colors"
+              className="bg-transparent border border-gradient-to-r from-green-400 to-cyan-400 hover:bg-gradient-to-r hover:border-transparent text-green-500 hover:text-white font-bold py-3 px-6 rounded-full transition-colors"
             >
               Lihat Aksi
             </Link>
@@ -59,7 +59,7 @@ export default function Home() {
           Perubahan iklim bukan lagi isu masa depan. Dampaknya sudah kita
           rasakan sekarang, dari kenaikan permukaan laut hingga cuaca ekstrem.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 ">
           <StatCard
             prefix="+"
             end={1.1}

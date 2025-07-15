@@ -2,16 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react'; // Impor useState dan useEffect
+import { useState, useEffect } from 'react';
 
 const Navbar = () => {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Efek untuk mendeteksi scroll
   useEffect(() => {
     const handleScroll = () => {
-      // Set state menjadi true jika user scroll lebih dari 10px
       if (window.scrollY > 10) {
         setIsScrolled(true);
       } else {
@@ -21,13 +19,13 @@ const Navbar = () => {
 
     window.addEventListener('scroll', handleScroll);
 
-    // Membersihkan event listener saat komponen di-unmount
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
   const navLinks = [
+    { href: '/', label: 'Beranda' },
     { href: '/calculate', label: 'Kalkulator' },
     { href: '/actions', label: 'Aksi Nyata' },
     { href: '/map', label: 'Peta Lokal' },
@@ -36,11 +34,11 @@ const Navbar = () => {
   return (
     <nav
       className={`
-        w-full max-w-6xl mx-auto text-white flex justify-between items-center fixed top-4 left-0 right-0 z-40 
+        w-full max-w-6xl mx-auto text-white flex justify-between items-center fixed top-4 left-0 right-0 z-40
         transition-all duration-300
         ${
           isScrolled
-            ? 'rounded-full py-3 px-6 bg-gray-900/50 backdrop-blur-lg'
+            ? 'rounded-full py-3 px-6 bg-gradient-to-r from-green-900/70 to-teal-900/70 backdrop-blur-lg'
             : 'rounded-none py-5 px-8 bg-transparent'
         }
       `}
@@ -59,12 +57,16 @@ const Navbar = () => {
               key={link.href}
               href={link.href}
               className={`relative hover:text-gray-200 transition-colors
-                ${isActive ? 'text-green-400 font-semibold' : ''}
+                ${
+                  isActive
+                    ? 'font-semibold bg-gradient-to-r from-green-400 to-cyan-400 text-transparent bg-clip-text'
+                    : ''
+                }
               `}
             >
               {link.label}
               {isActive && (
-                <span className="absolute left-0 -bottom-1 w-full h-0.5 bg-green-400"></span>
+                <span className="absolute left-0 -bottom-1 w-full h-0.5 bg-gradient-to-r from-green-400 to-cyan-400"></span>
               )}
             </Link>
           );
@@ -72,9 +74,9 @@ const Navbar = () => {
       </div>
 
       {/* Tombol Aksi (CTA) */}
-      <button className="hidden md:block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+      <Link href="/actions" className="hidden md:block bg-gradient-to-r from-green-400/30 to-cyan-400/30 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">
         Mulai Aksi
-      </button>
+      </Link>
     </nav>
   );
 };

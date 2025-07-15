@@ -3,14 +3,20 @@
 import { useState, useEffect } from 'react';
 import { TypeAnimation } from 'react-type-animation';
 
-// Tipe data untuk pilihan dari API
 interface Choice {
   id: number;
-  [key: string]: any; // Untuk properti dinamis seperti 'provinsi', 'jenis_kendaraan'
+  provinsi?: string;
+  jenis_kendaraan?: string;
+  jenis_makanan?: string;
+}
+
+interface Breakdown {
+    listrik: number;
+    transportasi: number;
+    konsumsi: number;
 }
 
 export default function CalculatorPage() {
-  // State untuk menyimpan nilai input dari pengguna
   const [values, setValues] = useState({
     listrik_kwh: '',
     transportasi_km: '',
@@ -20,7 +26,6 @@ export default function CalculatorPage() {
     makanan_id: '',
   });
 
-  // State untuk menyimpan pilihan dropdown
   const [choices, setChoices] = useState<{
     listrik: Choice[];
     transportasi: Choice[];
@@ -32,15 +37,13 @@ export default function CalculatorPage() {
   });
 
   const [totalEmissions, setTotalEmissions] = useState<number | null>(null);
-  const [breakdown, setBreakdown] = useState(null); // State untuk rincian emisi
+  const [breakdown, setBreakdown] = useState<Breakdown | null>(null); 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Mengambil data untuk dropdown saat komponen dimuat
   useEffect(() => {
     const fetchChoices = async () => {
       try {
-        // --- PERBAIKAN URL DI BAWAH INI ---
         const [listrikRes, transRes, makananRes] = await Promise.all([
           fetch('http://127.0.0.1:8000/api/v1/choices/listrik/'),
           fetch('http://127.0.0.1:8000/api/v1/choices/transportasi/'),
@@ -54,7 +57,9 @@ export default function CalculatorPage() {
         const makanan = await makananRes.json();
         setChoices({ listrik, transportasi, makanan });
       } catch (err) {
-        setError('Gagal memuat pilihan dari server. Pastikan backend berjalan.');
+        if (err instanceof Error) {
+            setError(`Gagal memuat pilihan dari server: ${err.message}. Pastikan backend berjalan.`);
+        }
       }
     };
     fetchChoices();
@@ -71,7 +76,6 @@ export default function CalculatorPage() {
     setError(null);
 
     try {
-      // --- PERBAIKAN URL DI BAWAH INI ---
       const response = await fetch('http://127.0.0.1:8000/api/v1/calculate/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -82,9 +86,11 @@ export default function CalculatorPage() {
       if (!response.ok) throw new Error(result.error || 'Terjadi kesalahan');
 
       setTotalEmissions(result.totalEmissions);
-      setBreakdown(result.breakdown); // Simpan rincian
-    } catch (err: any) {
-      setError(err.message);
+      setBreakdown(result.breakdown);
+    } catch (err) {
+       if (err instanceof Error) {
+        setError(err.message);
+       }
     } finally {
       setIsLoading(false);
     }
@@ -111,61 +117,67 @@ export default function CalculatorPage() {
         <TypeAnimation sequence={['Cari tahu estimasi jejak karbon bulananmu dengan lebih akurat.', 2000]} wrapper="p" speed={50} className="text-center text-gray-400 mb-10 text-lg" repeat={0} />
 
         {!totalEmissions ? (
-          <form onSubmit={handleSubmit} className="bg-gray-900/30 backdrop-blur-lg border border-gray-700 p-8 rounded-2xl shadow-lg space-y-6">
-            {/* Listrik */}
-            <div>
-              <label className="block text-lg font-medium mb-2">Listrik</label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <select name="listrik_id" value={values.listrik_id} onChange={handleChange} required className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500">
-                  <option value="">Pilih Provinsi/Jaringan</option>
-                  {choices.listrik.map(c => <option key={c.id} value={c.id}>{c.provinsi}</option>)}
-                </select>
-                <input type="number" name="listrik_kwh" value={values.listrik_kwh} placeholder="Konsumsi (kWh)" onChange={handleChange} required className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500" />
-              </div>
-            </div>
-
-            {/* Transportasi */}
-            <div>
-              <label className="block text-lg font-medium mb-2">Transportasi</label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <select name="transportasi_id" value={values.transportasi_id} onChange={handleChange} required className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500">
-                  <option value="">Pilih Jenis Kendaraan</option>
-                  {choices.transportasi.map(c => <option key={c.id} value={c.id}>{c.jenis_kendaraan}</option>)}
-                </select>
-                <input type="number" name="transportasi_km" value={values.transportasi_km} placeholder="Jarak Tempuh (km)" onChange={handleChange} required className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500" />
-              </div>
-            </div>
-
-            {/* Makanan */}
-            <div>
-              <label className="block text-lg font-medium mb-2">Konsumsi Makanan</label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <select name="makanan_id" value={values.makanan_id} onChange={handleChange} required className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500">
-                  <option value="">Pilih Jenis Makanan</option>
-                  {choices.makanan.map(c => <option key={c.id} value={c.id}>{c.jenis_makanan}</option>)}
-                </select>
-                <input type="number" name="makanan_porsi" value={values.makanan_porsi} placeholder="Jumlah (kg/bulan)" onChange={handleChange} required className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500" />
-              </div>
-            </div>
-
-            <button type="submit" disabled={isLoading} className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-md transition-colors text-lg disabled:bg-gray-500">
-              {isLoading ? 'Menghitung...' : 'Hitung Sekarang'}
-            </button>
-            {error && <p className="text-red-400 mt-4 text-center">{error}</p>}
-          </form>
-        ) : (
-          <div className="bg-gray-900/30 backdrop-blur-lg border border-gray-700 p-8 rounded-2xl shadow-lg text-center">
-            <h2 className="text-2xl font-bold mb-4">Hasil Jejak Karbonmu</h2>
-            <p className="text-5xl font-bold text-green-400 mb-4">{totalEmissions.toFixed(2)} <span className="text-xl">kg CO₂e / bulan</span></p>
-            {breakdown && (
-                <div className="text-left text-gray-300 w-fit mx-auto mb-6 space-y-2">
-                    <p>⚡️ Listrik: <strong>{(breakdown as any).listrik.toFixed(2)}</strong> kg CO₂e</p>
-                    <p>🚗 Transportasi: <strong>{(breakdown as any).transportasi.toFixed(2)}</strong> kg CO₂e</p>
-                    <p>🍔 Konsumsi: <strong>{(breakdown as any).konsumsi.toFixed(2)}</strong> kg CO₂e</p>
+          // Container dengan border gradasi
+          <div className="p-[1px] bg-gradient-to-r from-green-400/30 to-cyan-400/30 rounded-2xl">
+            <form onSubmit={handleSubmit} className="bg-gray-900/80 backdrop-blur-lg p-8 rounded-2xl space-y-6">
+              {/* Listrik */}
+              <div>
+                <label className="block text-lg font-medium mb-2">Listrik</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <select name="listrik_id" value={values.listrik_id} onChange={handleChange} required className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500">
+                    <option value="">Pilih Provinsi/Jaringan</option>
+                    {choices.listrik.map(c => <option key={c.id} value={c.id}>{c.provinsi}</option>)}
+                  </select>
+                  <input type="number" name="listrik_kwh" value={values.listrik_kwh} placeholder="Konsumsi (kWh)" onChange={handleChange} required className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500" />
                 </div>
-            )}
-            <p className="text-gray-400 mb-6">Ini adalah estimasi berdasarkan data yang kamu berikan. Mulailah kurangi dari sekarang!</p>
-            <button onClick={resetCalculator} className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md transition-colors">Hitung Ulang</button>
+              </div>
+
+              {/* Transportasi */}
+              <div>
+                <label className="block text-lg font-medium mb-2">Transportasi</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <select name="transportasi_id" value={values.transportasi_id} onChange={handleChange} required className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500">
+                    <option value="">Pilih Jenis Kendaraan</option>
+                    {choices.transportasi.map(c => <option key={c.id} value={c.id}>{c.jenis_kendaraan}</option>)}
+                  </select>
+                  <input type="number" name="transportasi_km" value={values.transportasi_km} placeholder="Jarak Tempuh (km)" onChange={handleChange} required className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500" />
+                </div>
+              </div>
+
+              {/* Makanan */}
+              <div>
+                <label className="block text-lg font-medium mb-2">Konsumsi Makanan</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <select name="makanan_id" value={values.makanan_id} onChange={handleChange} required className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500">
+                    <option value="">Pilih Jenis Makanan</option>
+                    {choices.makanan.map(c => <option key={c.id} value={c.id}>{c.jenis_makanan}</option>)}
+                  </select>
+                  <input type="number" name="makanan_porsi" value={values.makanan_porsi} placeholder="Jumlah (kg/bulan)" onChange={handleChange} required className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500" />
+                </div>
+              </div>
+
+              {/* Tombol dengan gradasi */}
+              <button type="submit" disabled={isLoading} className="w-full font-bold py-3 px-6 rounded-md transition-all duration-300 text-white text-lg disabled:opacity-50 bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-600 hover:to-cyan-600">
+                {isLoading ? 'Menghitung...' : 'Hitung Sekarang'}
+              </button>
+              {error && <p className="text-red-400 mt-4 text-center">{error}</p>}
+            </form>
+          </div>
+        ) : (
+          <div className="p-[1px] bg-gradient-to-r from-green-400/30 to-cyan-400/30 rounded-2xl">
+            <div className="bg-gray-900/80 backdrop-blur-lg p-8 rounded-2xl text-center">
+              <h2 className="text-2xl font-bold mb-4">Hasil Jejak Karbonmu</h2>
+              <p className="text-5xl font-bold text-green-400 mb-4">{totalEmissions.toFixed(2)} <span className="text-xl">kg CO₂e / bulan</span></p>
+              {breakdown && (
+                  <div className="text-left text-gray-300 w-fit mx-auto mb-6 space-y-2">
+                      <p>⚡️ Listrik: <strong>{breakdown.listrik.toFixed(2)}</strong> kg CO₂e</p>
+                      <p>🚗 Transportasi: <strong>{breakdown.transportasi.toFixed(2)}</strong> kg CO₂e</p>
+                      <p>🍔 Konsumsi: <strong>{breakdown.konsumsi.toFixed(2)}</strong> kg CO₂e</p>
+                  </div>
+              )}
+              <p className="text-gray-400 mb-6">Ini adalah estimasi berdasarkan data yang kamu berikan. Mulailah kurangi dari sekarang!</p>
+              <button onClick={resetCalculator} className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md transition-colors">Hitung Ulang</button>
+            </div>
           </div>
         )}
       </div>

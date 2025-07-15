@@ -15,7 +15,7 @@ interface EcoPoint {
 interface MapProps {
   points: EcoPoint[];
   userLocation: [number, number] | null;
-  radiusInKm: number; // Tambahkan prop untuk radius
+  radiusInKm: number;
 }
 
 const customIcon = new Icon({
@@ -28,7 +28,6 @@ const userIcon = new Icon({
   iconSize: [30, 30],
 });
 
-// Komponen untuk otomatis pan ke lokasi pengguna
 function ChangeView({ center, zoom }: { center: [number, number]; zoom: number }) {
   const map = useMap();
   useEffect(() => {
@@ -37,31 +36,39 @@ function ChangeView({ center, zoom }: { center: [number, number]; zoom: number }
   return null;
 }
 
+function getZoomLevel(radiusInKm: number) {
+  if (radiusInKm <= 2) return 14;
+  if (radiusInKm <= 5) return 13;
+  if (radiusInKm <= 10) return 12;
+  if (radiusInKm <= 25) return 11;
+  return 10;
+}
+
 const Map = ({ points, userLocation, radiusInKm }: MapProps) => {
-  const mapCenter = userLocation || [-6.26, 106.8]; // Default ke Jakarta jika lokasi tidak ada
+  const mapCenter = userLocation || [-6.26, 106.8];
+  
+  const zoomLevel = getZoomLevel(radiusInKm);
 
   return (
     <MapContainer
       center={mapCenter}
-      zoom={13}
+      zoom={zoomLevel} 
       style={{ height: '100%', width: '100%', borderRadius: 'inherit' }}
     >
-      <ChangeView center={mapCenter} zoom={13} />
+      <ChangeView center={mapCenter} zoom={zoomLevel} /> 
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-
-      {/* Tampilkan penanda dan lingkaran radius jika lokasi pengguna ada DAN radiusnya valid */}
+      
       {userLocation && !isNaN(radiusInKm) && radiusInKm > 0 && (
         <>
           <Marker position={userLocation} icon={userIcon}>
             <Popup>Lokasi Anda</Popup>
           </Marker>
-          {/* Tambahkan komponen Circle untuk menampilkan radius */}
           <Circle
             center={userLocation}
-            radius={radiusInKm * 1000} // Konversi km ke meter
+            radius={radiusInKm * 1000}
             pathOptions={{ color: 'cyan', fillColor: 'cyan', fillOpacity: 0.1 }}
           />
         </>
