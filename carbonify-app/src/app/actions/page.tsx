@@ -1,18 +1,57 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { TypeAnimation } from 'react-type-animation';
-import { actionsData } from '@/lib/data'; // <-- Impor dari sini
 
-// HAPUS array 'actionsData' yang ada di sini sebelumnya
+// Tipe data untuk Aksi Nyata, sesuai dengan respons API
+interface Action {
+  id: number;
+  emoji: string;
+  title: string;
+  description: string;
+}
 
 export default function ActionsPage() {
+  // State untuk menyimpan data dari API
+  const [actions, setActions] = useState<Action[]>([]);
+  // State untuk menandakan proses pengambilan data
+  const [loading, setLoading] = useState(true);
+
+  // useEffect akan berjalan sekali saat komponen dimuat
+  useEffect(() => {
+    async function fetchActions() {
+      try {
+        // --- PERBAIKAN URL DI BAWAH INI ---
+        const response = await fetch('http://127.0.0.1:8000/api/v1/actions/');
+        if (!response.ok) {
+          throw new Error('Gagal mengambil data dari server');
+        }
+        const data = await response.json();
+        setActions(data);
+      } catch (error) {
+        console.error("Gagal mengambil data aksi:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchActions();
+  }, []);
+
+  if (loading) {
+    return (
+        <div className="min-h-screen flex justify-center items-center">
+            <p className="text-xl text-gray-400">Memuat Aksi Nyata...</p>
+        </div>
+    );
+  }
+
   return (
     <div className="min-h-screen pt-32 pb-20">
       <div className="container mx-auto px-4">
         <h1 className="text-4xl font-bold text-center mb-2">
           Aksi Nyata untuk Iklim
         </h1>
-
         <TypeAnimation
           sequence={[
             'Langkah-langkah kecil dengan dampak besar yang bisa kamu mulai hari ini.',
@@ -23,9 +62,8 @@ export default function ActionsPage() {
           className="text-center text-gray-400 mb-12 text-lg"
           repeat={0}
         />
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {actionsData.map((action) => (
+          {actions.map((action) => (
             <div
               key={action.id}
               className="bg-gray-900/30 backdrop-blur-lg border border-gray-700 p-6 rounded-2xl shadow-lg hover:border-gray-500 hover:scale-105 transition-all duration-300"
