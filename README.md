@@ -1,54 +1,91 @@
-# Carbonify 🌍
+# 🌍 Carbonify - Jejak Karbon & Aksi Iklim
 
-![Screenshot Carbonify](./screenshot.png)
+**Carbonify** adalah sebuah platform web interaktif yang dirancang untuk meningkatkan kesadaran tentang jejak karbon dan mendorong aksi nyata dalam menghadapi perubahan iklim. Proyek ini dibangun sebagai bagian dari **Technology Innovative Challenge 8.0** dengan tema "Impact World through Code: Building Solutions for Sustainable Development Goals".
 
-## Deskripsi
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Site-green?style=for-the-badge)](https://your-live-demo-url.com) 
 
-**Carbonify** adalah sebuah aplikasi web interaktif yang dibangun untuk kompetisi **Technology Innovative Challenge 8.0** dengan tema *"Impact World through Code: Building Solutions for Sustainable Development Goals"*.
 
-Proyek ini berfokus pada **Sub-tema 5: Penanganan Perubahan Iklim**. Tujuannya adalah untuk meningkatkan kesadaran individu terhadap jejak karbon yang mereka hasilkan dan memberikan panduan praktis untuk mengadopsi gaya hidup yang lebih berkelanjutan.
+![Carbonify Screenshot](/carbonify-app/public/images/image.png) 
 
-[**Lihat Live Demo**](#) ---
+---
 
 ## ✨ Fitur Utama
 
--   **Kalkulator Jejak Karbon 🧮**: Menghitung estimasi emisi karbon bulanan berdasarkan konsumsi listrik, transportasi, dan pola makan.
--   **Daftar Aksi Nyata 📝**: Kumpulan kartu informatif yang berisi langkah-langkah praktis untuk mengurangi dampak lingkungan.
--   **Peta Lokasi Berkelanjutan 🗺️**: Peta interaktif (menggunakan Leaflet.js) yang menunjukkan lokasi ramah lingkungan seperti bank sampah dan *thrift store*.
--   **Desain Modern & Interaktif ✨**: Tampilan futuristik dengan latar belakang Aurora, efek cahaya kursor, dan animasi *typewriter* untuk pengalaman pengguna yang menarik.
--   **Animasi Angka 📊**: Statistik dampak perubahan iklim disajikan dengan animasi hitung naik saat terlihat di layar.
+-   **Desain Futuristik**: Antarmuka modern dengan tema Aurora GeoGlow dan efek cahaya kursor yang interaktif.
+-   **Kalkulator Jejak Karbon**: Fitur interaktif untuk menghitung estimasi emisi karbon bulanan dari aktivitas listrik, transportasi, dan konsumsi.
+-   **Daftar Aksi Nyata**: Kumpulan kartu informatif yang berisi langkah-langkah praktis untuk mengurangi dampak lingkungan.
+-   **Peta Lokal Interaktif**: Peta berbasis Leaflet yang menunjukkan lokasi-lokasi ramah lingkungan seperti bank sampah, thrift store, dll.
+-   **Animasi Modern**: Efek *typewriter* dan animasi angka yang berjalan saat di-scroll untuk pengalaman pengguna yang lebih dinamis.
+-   **Desain Responsif**: Tampilan yang dioptimalkan untuk berbagai perangkat, dari desktop hingga mobile.
 
 ---
 
-## 🛠️ Teknologi yang Digunakan
+## 🛠️ Tech Stack & Tools
 
--   **Frontend**: [Next.js](https://nextjs.org/) (React Framework)
--   **Bahasa**: [TypeScript](https://www.typescriptlang.org/)
--   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
--   **Peta**: [Leaflet.js](https://leafletjs.com/) & [React-Leaflet](https://react-leaflet.js.org/)
--   **Animasi**:
-    -   [React Type Animation](https://www.npmjs.com/package/react-type-animation)
-    -   [React CountUp](https://www.npmjs.com/package/react-countup)
-    -   [React Intersection Observer](https://www.npmjs.com/package/react-intersection-observer)
--   **Deployment**: [Vercel](https://vercel.com/)
+<table>
+  <tr>
+    <td align="center" width="96">
+      <a href="https://nextjs.org/">
+        <img src="https://techstack-generator.vercel.app/nextjs-icon.svg" alt="Next.js" width="65" height="65" />
+      </a>
+      <br>Next.js
+    </td>
+    <td align="center" width="96">
+      <a href="https://react.dev/">
+        <img src="https://techstack-generator.vercel.app/react-icon.svg" alt="React" width="65" height="65" />
+      </a>
+      <br>React
+    </td>
+    <td align="center" width="96">
+      <a href="https://www.typescriptlang.org/">
+        <img src="https://techstack-generator.vercel.app/ts-icon.svg" alt="TypeScript" width="65" height="65" />
+      </a>
+      <br>TypeScript
+    </td>
+    <td align="center" width="96">
+      <a href="https://tailwindcss.com/">
+        <img src="https://techstack-generator.vercel.app/tailwind-icon.svg" alt="Tailwind CSS" width="65" height="65" />
+      </a>
+      <br>Tailwind CSS
+    </td>
+    <td align="center" width="96">
+        <a href="https://leafletjs.com/">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/leaflet/leaflet-original.svg" alt="Leaflet" width="65" height="65" />
+        </a>
+        <br>Leaflet.js
+    </td>
+    <td align="center" width="96">
+      <a href="https://www.framer.com/motion/">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/framermotion/framermotion-original.svg" alt="Framer Motion" width="65" height="65" />
+      </a>
+      <br>Framer Motion
+    </td>
+     <td align="center" width="96">
+      <a href="https://prettier.io/">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/prettier/prettier-original.svg" alt="Prettier" width="65" height="65" />
+      </a>
+      <br>Prettier
+    </td>
+  </tr>
+</table>
 
 ---
 
-## 🚀 Cara Menjalankan Proyek Secara Lokal
+## 🚀 Instalasi & Menjalankan Proyek
 
-Pastikan Anda sudah menginstal Node.js (versi 18 atau lebih baru).
+Proyek ini dibuat menggunakan `create-next-app`. Untuk menjalankannya secara lokal, ikuti langkah berikut:
 
 1.  **Clone repositori ini:**
     ```bash
     git clone [https://github.com/Whyawww/Carbonify.git](https://github.com/Whyawww/Carbonify.git)
     ```
 
-2.  **Masuk ke direktori proyek aplikasi:**
+2.  **Masuk ke direktori proyek:**
     ```bash
-    cd Carbonify/carbonify-app
+    cd Carbonify
     ```
 
-3.  **Instal semua dependensi:**
+3.  **Install semua dependensi:**
     ```bash
     npm install
     ```
@@ -57,15 +94,13 @@ Pastikan Anda sudah menginstal Node.js (versi 18 atau lebih baru).
     ```bash
     npm run dev
     ```
+    Atau gunakan Turbopack untuk performa lebih cepat:
+    ```bash
+    npm run dev -- --turbo
+    ```
 
 5.  Buka [http://localhost:3000](http://localhost:3000) di browser Anda.
 
 ---
 
-## 📄 Lisensi
-
-Proyek ini dilisensikan di bawah [Lisensi MIT](https://opensource.org/licenses/MIT).
-
----
-
-Dibuat dengan semangat untuk bumi oleh **[Wahyu Aji Nusantara]**.
+Dibuat dengan semangat untuk bumi yang lebih baik. 💚
