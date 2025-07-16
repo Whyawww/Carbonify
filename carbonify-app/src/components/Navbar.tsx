@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { FaBars, FaTimes } from 'react-icons/fa';
+import Image from 'next/image';
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -44,8 +45,8 @@ const Navbar = () => {
           }
         `}
       >
-        <Link href="/" className="font-bold text-2xl z-50">
-          Carbonify
+        <Link href="/">       
+            <Image src="Logo.svg" alt="Logo" width={120} height={40}/>
         </Link>
 
         <div className="hidden md:flex items-center space-x-8">
