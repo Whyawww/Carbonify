@@ -12,6 +12,9 @@ const sora = Sora({ subsets: ['latin'], weight: ['400', '700'] });
 export const metadata: Metadata = {
   title: 'Carbonify',
   description: 'Take action for a better climate.',
+  icons: {
+    icon: '/vercel.svg', 
+  },
 };
 
 export default function RootLayout({
