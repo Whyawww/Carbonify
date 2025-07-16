@@ -1,11 +1,14 @@
 'use client';
-
+import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { TypeAnimation } from 'react-type-animation';
 import StatCard from '@/components/StatCard';
 import './globals.css';
-
+<Head>
+  <title>Carbonify</title>
+  <meta name="description" content="Platform edukasi dan aksi jejak karbon" />
+</Head>
 export default function Home() {
   return (
     <div className="min-h-screen bg-black">
@@ -66,7 +69,7 @@ export default function Home() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12 md:mb-16">
               <div className="group relative overflow-hidden rounded-2xl shadow-2xl">
                 <Image
-                  src="/images/Jejakkarbon.png"
+                  src="/images/Jejakkarbon.jpg"
                   alt="Tingkatkan Kesadaran Jejak Karbon"
                   width={400}
                   height={300}
@@ -82,7 +85,7 @@ export default function Home() {
 
               <div className="group relative overflow-hidden rounded-2xl shadow-2xl">
                 <Image
-                  src="/images/Kesadaran.png"
+                  src="/images/Kesadaran.jpg"
                   alt="Dashboard Kesadaran Lingkungan"
                   width={400}
                   height={300}
@@ -97,7 +100,7 @@ export default function Home() {
 
               <div className="group relative overflow-hidden rounded-2xl shadow-2xl sm:col-span-2 lg:col-span-1">
                 <Image
-                  src="/images/Aksinyata.png"
+                  src="/images/Aksinyata.jpg"
                   alt="Aksi Nyata Perubahan Iklim"
                   width={400}
                   height={300}
@@ -105,8 +108,8 @@ export default function Home() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                 <div className="absolute bottom-3 md:bottom-4 left-3 md:left-4 right-3 md:right-4">
-                  <h3 className="text-white font-bold text-base md:text-lg mb-1 md:mb-2">Aksi Nyata</h3>
-                  <p className="text-gray-300 text-xs md:text-sm">Temukan langkah konkret yang dapat Anda ambil untuk mengurangi emisi karbon dan berperan aktif dalam mitigasi perubahan iklim.</p>
+                  <h3 className="text-white font-bold text-base md:text-lg mb-1 md:mb-2">Mulailah Aksi Nyata</h3>
+                  <p className="text-gray-300 text-xs md:text-sm">Mari lakukan langkah konkret yang dapat mengurangi emisi karbon dan berperan aktif dalam mitigasi perubahan iklim.</p>
                 </div>
               </div>
             </div>
@@ -117,8 +120,8 @@ export default function Home() {
         <section className="py-12 md:py-16 lg:py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div className="mb-8 md:mb-12">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">
-                Krisis Iklim: Mengapa Kita Harus Bertindak?
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent leading-tight">
+                Mengapa Kita Harus Bertindak?
               </h2>
               <p className="max-w-4xl mx-auto text-gray-400 text-base md:text-lg leading-relaxed px-4">
                 Perubahan iklim adalah tantangan terbesar abad ini. Setiap aktivitas kita menghasilkan jejak karbon yang 
@@ -140,7 +143,7 @@ export default function Home() {
               
               <div className="group relative bg-gradient-to-br from-yellow-900/30 to-orange-900/30 p-6 md:p-8 rounded-xl backdrop-blur-sm border border-yellow-500/20 hover:border-yellow-400/50 transition-all duration-300">
                 <StatCard
-                  end={2.3}
+                  end={2.18}
                   decimals={1}
                   suffix=" Ton CO₂"
                   title="Rata-rata Jejak Karbon Tahunan per Orang Indonesia"
@@ -150,7 +153,8 @@ export default function Home() {
               
               <div className="group relative bg-gradient-to-br from-blue-900/30 to-cyan-900/30 p-6 md:p-8 rounded-xl backdrop-blur-sm border border-blue-500/20 hover:border-blue-400/50 transition-all duration-300">
                 <StatCard
-                  end={29}
+                  end={31.9}
+                  decimals={1}
                   suffix="%"
                   title="Target Pengurangan Emisi Indonesia di 2030"
                 />
@@ -164,7 +168,7 @@ export default function Home() {
         <section className="py-12 md:py-16 lg:py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 md:mb-16">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent leading-tight">
                 Fitur Interaktif Carbonify
               </h2>
               <p className="max-w-3xl mx-auto text-gray-400 text-base md:text-lg px-4">
@@ -186,7 +190,7 @@ export default function Home() {
                 <div className="absolute bottom-4 md:bottom-6 left-4 md:left-6 right-4 md:right-6">
                   <h3 className="text-white font-bold text-xl md:text-2xl mb-2 md:mb-3">Monitoring Interaktif</h3>
                   <p className="text-gray-300 text-sm md:text-base leading-relaxed">
-                    Pantau jejak karbon dengan visualisasi real-time yang membantu memahami dampak aktivitas harian terhadap iklim.
+                    Pantau jejak karbon dengan kalkulator interaktif yang membantu memahami jejak karbon bulananmu.
                   </p>
                 </div>
               </div>
@@ -274,11 +278,8 @@ export default function Home() {
         <section className="py-12 md:py-16 lg:py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 md:mb-16">
-              <span className="inline-block px-3 md:px-4 py-2 bg-green-500/20 rounded-full text-green-300 text-xs md:text-sm font-medium border border-green-500/30 backdrop-blur-sm mb-4">
-                Platform Interaktif
-              </span>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">
-                Bagaimana Carbonify Bekerja?
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent leading-tight">
+                Dari Data ke Aksi Nyata!
               </h2>
               <p className="max-w-3xl mx-auto text-gray-400 text-base md:text-lg px-4">
                 Platform interaktif yang menggabungkan teknologi, edukasi, dan komunitas untuk meningkatkan kesadaran 
@@ -293,13 +294,23 @@ export default function Home() {
                 </div>
                 <div className="text-center pt-6 md:pt-8">
                   <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 md:mb-6 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full flex items-center justify-center">
-                    <svg className="w-6 h-6 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                    </svg>
+                 <svg className="w-6 h-6 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <rect x="4" y="2" width="16" height="20" rx="2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />     
+                    <rect x="7" y="4.5" width="10" height="2" rx="0.5" fill="currentColor" />
+                    <circle cx="8" cy="10" r="0.7" fill="currentColor" />
+                    <circle cx="12" cy="10" r="0.7" fill="currentColor" />
+                    <circle cx="16" cy="10" r="0.7" fill="currentColor" />                  
+                    <circle cx="8" cy="14" r="0.7" fill="currentColor" />
+                    <circle cx="12" cy="14" r="0.7" fill="currentColor" />
+                    <circle cx="16" cy="14" r="0.7" fill="currentColor" />
+                    <circle cx="8" cy="18" r="0.7" fill="currentColor" />
+                    <circle cx="12" cy="18" r="0.7" fill="currentColor" />
+                    <rect x="15" y="17" width="2" height="2" fill="currentColor" rx="0.5" />
+                  </svg>
                   </div>
-                  <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-green-300">Edukasi Interaktif</h3>
+                  <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-green-300">Kalkulator Interaktif</h3>
                   <p className="text-gray-400 leading-relaxed text-sm md:text-base">
-                    Pelajari dampak aktivitas harian terhadap perubahan iklim melalui konten interaktif yang mudah dipahami.
+                    Kalkulator jejak karbon akan membantumu melihat seberapa besar dampak aktivitas harianmu terhadap perubahan iklim.
                   </p>
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -318,7 +329,7 @@ export default function Home() {
                   </div>
                   <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-cyan-300">Kesadaran Melalui Data</h3>
                   <p className="text-gray-400 leading-relaxed text-sm md:text-base">
-                    Visualisasi data yang powerful untuk memahami jejak karbon dan dampak perubahan iklim secara real-time.
+                    Informasi yang dihasilkan dapat menambah pemahaman yang lebih akurat terhadap jejak karbon dan dampak perubahan iklim.
                   </p>
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -336,7 +347,7 @@ export default function Home() {
                   </div>
                   <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-purple-300">Aksi Nyata Bersama</h3>
                   <p className="text-gray-400 leading-relaxed text-sm md:text-base">
-                    Bergabung dengan komunitas untuk mengambil aksi nyata dan berdampak dalam menghadapi perubahan iklim.
+                    Bergabunglah dengan komunitas kami dan lakukan aksi nyata untuk menghadapi perubahan iklim dan membawa dampak positif bagi bumi.
                   </p>
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-indigo-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
