@@ -117,7 +117,7 @@ export default function Home() {
         <section className="py-12 md:py-16 lg:py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div className="mb-8 md:mb-12">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">
                 Krisis Iklim: Mengapa Kita Harus Bertindak?
               </h2>
               <p className="max-w-4xl mx-auto text-gray-400 text-base md:text-lg leading-relaxed px-4">

@@ -19,8 +19,6 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // INI BAGIAN YANG DIPERBAIKI
-  // Setiap kali URL berubah, panggil setIsMenuOpen(false) untuk menutup menu.
   useEffect(() => {
     setIsMenuOpen(false);
   }, [pathname]);
@@ -40,7 +38,7 @@ const Navbar = () => {
           transition-all duration-300
           ${
             isScrolled
-              ? 'rounded-full py-3 px-6 bg-gradient-to-r from-green-900/70 to-teal-900/70 backdrop-blur-lg'
+              ? 'rounded-full py-3 px-6 bg-transparent border-2 border-green-500 backdrop-filter backdrop-blur-lg'
               : 'rounded-none py-5 px-8 bg-transparent'
           }
         `}
