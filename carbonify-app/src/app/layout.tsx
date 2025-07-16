@@ -3,6 +3,7 @@ import { Sora } from 'next/font/google';
 import CursorLight from '@/components/CursorLight';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import FallingLeaves from '@/components/FallingLeaves';
 import 'leaflet/dist/leaflet.css';
 import './globals.css';
 
@@ -21,6 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={sora.className}>
+        <FallingLeaves />
         <CursorLight />
         <Navbar />
         <main>{children}</main>

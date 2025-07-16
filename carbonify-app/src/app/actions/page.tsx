@@ -27,7 +27,7 @@ export default function ActionsPage() {
         const data = await response.json();
         setActions(data);
       } catch (error) {
-        console.error("Gagal mengambil data aksi:", error);
+        console.error('Gagal mengambil data aksi:', error);
       } finally {
         setLoading(false);
       }
@@ -38,9 +38,9 @@ export default function ActionsPage() {
 
   if (loading) {
     return (
-        <div className="min-h-screen flex justify-center items-center">
-            <p className="text-xl text-gray-400">Memuat Aksi Nyata...</p>
-        </div>
+      <div className="min-h-screen flex justify-center items-center">
+        <p className="text-xl text-gray-400">Memuat Aksi Nyata...</p>
+      </div>
     );
   }
 
@@ -67,13 +67,11 @@ export default function ActionsPage() {
               key={action.id}
               className="p-[1px] bg-gradient-to-r from-green-400/30 to-cyan-400/30 rounded-2xl hover:from-green-400/50 hover:to-cyan-400/50 transition-all duration-300"
             >
-                <div
-                    className="bg-gray-900/80 backdrop-blur-lg p-6 h-full rounded-2xl shadow-lg transition-all duration-300"
-                >
-                    <div className="text-4xl mb-4">{action.emoji}</div>
-                    <h3 className="text-2xl font-bold mb-2">{action.title}</h3>
-                    <p className="text-gray-400">{action.description}</p>
-                </div>
+              <div className="bg-gray-900/80 backdrop-blur-lg p-6 h-full rounded-2xl shadow-lg transition-all duration-300">
+                <div className="text-4xl mb-4">{action.emoji}</div>
+                <h3 className="text-2xl font-bold mb-2">{action.title}</h3>
+                <p className="text-gray-400">{action.description}</p>
+              </div>
             </div>
           ))}
         </div>

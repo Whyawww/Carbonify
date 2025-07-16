@@ -1,6 +1,13 @@
 'use client';
 
-import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  Circle,
+  useMap,
+} from 'react-leaflet';
 import { Icon } from 'leaflet';
 import { useEffect } from 'react';
 
@@ -28,7 +35,13 @@ const userIcon = new Icon({
   iconSize: [30, 30],
 });
 
-function ChangeView({ center, zoom }: { center: [number, number]; zoom: number }) {
+function ChangeView({
+  center,
+  zoom,
+}: {
+  center: [number, number];
+  zoom: number;
+}) {
   const map = useMap();
   useEffect(() => {
     map.setView(center, zoom);
@@ -46,21 +59,21 @@ function getZoomLevel(radiusInKm: number) {
 
 const Map = ({ points, userLocation, radiusInKm }: MapProps) => {
   const mapCenter = userLocation || [-6.26, 106.8];
-  
+
   const zoomLevel = getZoomLevel(radiusInKm);
 
   return (
     <MapContainer
       center={mapCenter}
-      zoom={zoomLevel} 
+      zoom={zoomLevel}
       style={{ height: '100%', width: '100%', borderRadius: 'inherit' }}
     >
-      <ChangeView center={mapCenter} zoom={zoomLevel} /> 
+      <ChangeView center={mapCenter} zoom={zoomLevel} />
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      
+
       {userLocation && !isNaN(radiusInKm) && radiusInKm > 0 && (
         <>
           <Marker position={userLocation} icon={userIcon}>

@@ -21,37 +21,43 @@ export const actionsData: Action[] = [
     id: 1,
     emoji: '♻️',
     title: 'Pilahlah Sampah',
-    description: 'Pisahkan sampah organik, anorganik, dan B3 untuk memudahkan proses daur ulang dan mengurangi volume sampah di TPA.',
+    description:
+      'Pisahkan sampah organik, anorganik, dan B3 untuk memudahkan proses daur ulang dan mengurangi volume sampah di TPA.',
   },
   {
     id: 2,
     emoji: '💧',
     title: 'Gunakan Botol Minum Isi Ulang',
-    description: 'Hindari membeli air minum kemasan sekali pakai. Satu botol plastik membutuhkan ratusan tahun untuk terurai.',
+    description:
+      'Hindari membeli air minum kemasan sekali pakai. Satu botol plastik membutuhkan ratusan tahun untuk terurai.',
   },
   {
     id: 3,
     emoji: '💡',
     title: 'Matikan Listrik Jika Tidak Digunakan',
-    description: 'Cabut charger dan matikan lampu atau peralatan elektronik lainnya saat tidak dipakai untuk menghemat energi.',
+    description:
+      'Cabut charger dan matikan lampu atau peralatan elektronik lainnya saat tidak dipakai untuk menghemat energi.',
   },
   {
     id: 4,
     emoji: '🛍️',
     title: 'Bawa Tas Belanja Sendiri',
-    description: 'Tolak kantong plastik sekali pakai saat berbelanja. Gunakan tas kain yang bisa dipakai berulang kali.',
+    description:
+      'Tolak kantong plastik sekali pakai saat berbelanja. Gunakan tas kain yang bisa dipakai berulang kali.',
   },
   {
     id: 5,
     emoji: '🚲',
     title: 'Gunakan Transportasi Publik atau Bersepeda',
-    description: 'Kurangi penggunaan kendaraan pribadi untuk menekan emisi gas rumah kaca dari sektor transportasi.',
+    description:
+      'Kurangi penggunaan kendaraan pribadi untuk menekan emisi gas rumah kaca dari sektor transportasi.',
   },
   {
     id: 6,
     emoji: '🥩',
     title: 'Kurangi Konsumsi Daging Merah',
-    description: 'Industri peternakan adalah salah satu penyumbang emisi gas metana terbesar. Coba ganti dengan protein nabati.',
+    description:
+      'Industri peternakan adalah salah satu penyumbang emisi gas metana terbesar. Coba ganti dengan protein nabati.',
   },
 ];
 
@@ -62,7 +68,7 @@ export const ecoPoints: EcoPoint[] = [
     name: 'Bank Sampah Melati Bersih',
     category: 'Bank Sampah',
     address: 'Jl. Mawar No. 12, Jakarta Selatan',
-    position: [-6.28, 106.80],
+    position: [-6.28, 106.8],
   },
   {
     id: 2,
@@ -83,6 +89,6 @@ export const ecoPoints: EcoPoint[] = [
     name: 'Kebun Kumara',
     category: 'Komunitas / Edukasi',
     address: 'Jl. Cilandak KKO No. 1, Jakarta Selatan',
-    position: [-6.30, 106.81],
+    position: [-6.3, 106.81],
   },
 ];
