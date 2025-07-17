@@ -42,7 +42,7 @@ const Navbar = () => {
         `}
       >
         <Link href="/">
-          <Image src="/Logo.svg" alt="Logo" width={120} height={40} />
+          <Image src="/Logo.svg" alt="Logo" width={130} height={40} />
         </Link>
 
         {/* Desktop Navigation */}
