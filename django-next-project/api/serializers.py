@@ -1,29 +1,34 @@
-# api/serializers.py
-
 from rest_framework import serializers
-from .models import Action, EcoPoint
 from .models import Action, EcoPoint, FaktorEmisiListrik, FaktorEmisiTransportasi, FaktorEmisiMakanan
 
+# Serializer untuk daftar singkat Aksi
 class ActionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Action
-        # Tentukan field yang akan dikirim ke frontend
-        fields = ['id', 'emoji', 'title', 'description']
+        fields = ['id', 'emoji', 'title', 'description', 'category']
 
+# Serializer untuk halaman detail Aksi
+class ActionDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Action
+        # PERBAIKAN: Tambahkan semua field baru untuk halaman detail
+        fields = [
+            'id', 'emoji', 'title', 'description', 'category', 'content', 
+            'impact_level', 'effort_level', 'image_url', 'related_links'
+        ]
 
+# Serializer lainnya (tidak berubah)
 class EcoPointSerializer(serializers.ModelSerializer):
     position = serializers.SerializerMethodField()
-    # Tambahkan field 'distance'
-    distance = serializers.FloatField(read_only=True) 
+    # Tambahkan required=False agar lebih aman jika jarak tidak dihitung
+    distance = serializers.FloatField(read_only=True, required=False) 
 
     class Meta:
         model = EcoPoint
-        # Tambahkan 'distance' ke fields
         fields = ['id', 'name', 'category', 'address', 'position', 'distance']
 
     def get_position(self, obj):
         return [obj.latitude, obj.longitude]
-    
 
 class FaktorEmisiListrikSerializer(serializers.ModelSerializer):
     class Meta:

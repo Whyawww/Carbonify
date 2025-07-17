@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django_filters',
     'drf_spectacular',
     'corsheaders',
+    'ckeditor',
     'api',
 ]
 
