@@ -10,7 +10,8 @@ from .models import (
 )
 from .serializers import (
     ActionSerializer, EcoPointSerializer,
-    FaktorEmisiListrikSerializer, FaktorEmisiTransportasiSerializer, FaktorEmisiMakananSerializer
+    FaktorEmisiListrikSerializer, FaktorEmisiTransportasiSerializer, FaktorEmisiMakananSerializer,
+    ActionDetailSerializer
 )
 
 # --- VIEWS UNTUK DATA STATIS (AKSI) ---
@@ -19,7 +20,11 @@ class ActionViewSet(viewsets.ReadOnlyModelViewSet):
     API endpoint untuk menampilkan semua data Aksi Nyata (Action).
     """
     queryset = Action.objects.all()
-    serializer_class = ActionSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return ActionDetailSerializer
+        return ActionSerializer
 
 
 # --- FILTERSET CANGGIH UNTUK ECOPOINT ---
@@ -133,7 +138,6 @@ class CarbonCalculatorView(APIView):
             listrik_kwh = float(request.data.get('listrik_kwh', 0))
             transportasi_km = float(request.data.get('transportasi_km', 0))
             makanan_porsi = float(request.data.get('makanan_porsi', 0))
-            
             listrik_id = int(request.data.get('listrik_id'))
             transportasi_id = int(request.data.get('transportasi_id'))
             makanan_id = int(request.data.get('makanan_id'))
@@ -153,12 +157,48 @@ class CarbonCalculatorView(APIView):
 
         total_emisi = emisi_listrik + emisi_transportasi + emisi_konsumsi
 
+        LIMIT_MAKSIMAL = 250
+
+        BENCHMARK_LISTRIK = 100
+        BENCHMARK_TRANSPORTASI = 75
+        BENCHMARK_KONSUMSI = 75
+
+        is_over_limit = total_emisi > LIMIT_MAKSIMAL
+        excess_details = []
+
+        if emisi_listrik > BENCHMARK_LISTRIK:
+            excess_details.append({
+                "category": "Listrik",
+                "emoji": "💡",
+                "message": f"Penggunaan listrik Anda menghasilkan {emisi_listrik:.1f} kg CO₂e, melebihi batas wajar ({BENCHMARK_LISTRIK} kg). Coba kurangi dengan mematikan alat yang tidak terpakai."
+            })
+
+        if emisi_transportasi > BENCHMARK_TRANSPORTASI:
+            excess_details.append({
+                "category": "Transportasi",
+                "emoji": "🚗",
+                "message": f"Jejak transportasi Anda sebesar {emisi_transportasi:.1f} kg CO₂e, di atas batas wajar ({BENCHMARK_TRANSPORTASI} kg). Pertimbangkan menggunakan transportasi publik atau bersepeda." 
+            })
+
+        if emisi_konsumsi > BENCHMARK_KONSUMSI:
+            excess_details.append ({
+                "category": "Konsumsi",
+                "emoji": "🍔",
+                "message": f"Emisi dari konsumsi makanan Anda adalah {emisi_konsumsi:.1f} kg CO₂e, melebihi batas wajar ({BENCHMARK_KONSUMSI} kg). Mengurangi konsumsi daging adalah langkah efektif."
+            })
+        
+
         hasil = {
             "totalEmissions": total_emisi,
             "breakdown": {
                 "listrik": round(emisi_listrik, 2),
                 "transportasi": round(emisi_transportasi, 2),
                 "konsumsi": round(emisi_konsumsi, 2),
+            }, 
+            "analysis": {
+                "limit" : LIMIT_MAKSIMAL,
+                "is_over_limit": is_over_limit,
+                "excess_details": excess_details,
             }
         }
         return Response(hasil, status=status.HTTP_200_OK)

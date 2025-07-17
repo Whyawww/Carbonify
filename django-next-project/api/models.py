@@ -1,12 +1,40 @@
 from django.db import models
+from ckeditor.fields import RichTextField
 
 # Model yang sudah ada untuk Aksi dan Peta (biarkan saja)
 class Action(models.Model):
+    CATEGORY_CHOICES = [
+        ('Listrik', 'Listrik'),
+        ('Transportasi', 'Transportasi'),
+        ('Konsumsi', 'Konsumsi'),
+        ('Umum', 'Umum'),
+    ]
+    IMPACT_CHOICES = [
+        ('Tinggi', 'Tinggi'),
+        ('Sedang', 'Sedang'),
+        ('Rendah', 'Rendah'),
+    ]
+    EFFORT_CHOICES = [
+        ('Mudah', 'Mudah'),
+        ('Sedang', 'Sedang'),
+        ('Sulit', 'Sulit'),
+    ]
+    
     emoji = models.CharField(max_length=5)
     title = models.CharField(max_length=100)
-    description = models.TextField()
+    description = models.TextField(help_text="Deskripsi singkat yang muncul di kartu.")
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='Umum')
+    content = RichTextField(blank=True, null=True, help_text="Konten detail seperti langkah-langkah, penjelasan mendalam, dll.")
+
+    # --- FIELD BARU UNTUK INFORMASI DETAIL ---
+    impact_level = models.CharField(max_length=10, choices=IMPACT_CHOICES, default='Sedang')
+    effort_level = models.CharField(max_length=10, choices=EFFORT_CHOICES, default='Sedang')
+    image_url = models.URLField(max_length=255, blank=True, null=True, help_text="URL gambar yang relevan dengan aksi ini.")
+    related_links = models.TextField(blank=True, null=True, help_text="Satu URL per baris untuk sumber atau bacaan lebih lanjut.")
+
     def __str__(self):
-        return self.title
+        return f"{self.title} ({self.category})"
+
     class Meta:
         ordering = ['id']
         verbose_name = "Aksi Nyata"
