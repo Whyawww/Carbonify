@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { TypeAnimation } from 'react-type-animation';
 import { FaDiscord } from 'react-icons/fa';
 
-// Array partner komunitas yang sudah diperbarui dengan logo lokal
 const communityPartners = [
     { name: 'Kementerian Lingkungan Hidup dan Kehutanan', logo: '/klh.png', link: 'https://www.menlhk.go.id/' },
     { name: 'WWF Indonesia', logo: '/wwf.png', link: 'https://www.wwf.id/' },
@@ -44,7 +43,7 @@ export default function CommunityPage() {
                     <div className="p-[1px] bg-gradient-to-r from-green-400/30 to-cyan-400/30 rounded-2xl">
                         <div className="bg-gray-900/80 backdrop-blur-lg p-8 rounded-2xl h-full flex flex-col items-center justify-center space-y-4">
                             <Image
-                                src="/vercel.svg" // Path ke logo di folder public
+                                src="/vercel.svg" 
                                 alt="Kontributor Logo"
                                 width={48}
                                 height={48}
