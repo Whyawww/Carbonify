@@ -12,7 +12,7 @@ const Footer = () => {
           </Link>
           <p className="text-sm">
             &copy; {new Date().getFullYear()} Carbonify. <br />
-            Dibuat untuk Technology Innovative Challenge 8.0.
+            Dibuat untuk Technology <br></br> Innovative Challenge 8.0
           </p>
         </div>
 
@@ -74,10 +74,10 @@ const Footer = () => {
             </li>
             <li>
               <Link
-                href="/careers"
+                href="/community"
                 className="hover:text-green-400 transition-colors"
               >
-                Karir
+                Komunitas
               </Link>
             </li>
             <li>
