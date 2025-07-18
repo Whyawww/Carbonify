@@ -22,6 +22,11 @@ export default function RootLayout({
 
   return (
     <html lang="en">
+       <head>
+        <title>Carbonify</title>
+        <meta name="description" content="Carbonify" />
+        <link rel="icon" href="/vercel.svg" />
+      </head>
       {/* Tambahkan className ke tag body */}
       <body className={`${inter.className} bg-gray-900 text-white overflow-x-hidden`}>
         <GoogleOAuthProvider clientId={googleClientId}>
