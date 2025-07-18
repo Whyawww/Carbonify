@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation'; // <-- 1. Impor useRouter
 import { useState, useEffect } from 'react';
 import { FaBars, FaTimes, FaCoins } from 'react-icons/fa';
 import Image from 'next/image';
@@ -9,6 +9,7 @@ import { useGamification } from '@/context/GamificationContext';
 
 const Navbar = () => {
   const pathname = usePathname();
+  const router = useRouter(); // <-- 2. Inisialisasi useRouter
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { score } = useGamification();
@@ -17,8 +18,16 @@ const Navbar = () => {
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     setIsLoggedIn(!!token);
-  }, [pathname]); 
+  }, [pathname]);
 
+  // --- 3. Tambahkan fungsi handleLogout ---
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken'); // Hapus sesi login
+    setIsLoggedIn(false); // Perbarui state
+    router.push('/'); // Arahkan ke beranda
+    router.refresh(); // Refresh state aplikasi
+  };
+  // -----------------------------------------
 
   useEffect(() => {
     const handleScroll = () => {
@@ -78,13 +87,22 @@ const Navbar = () => {
           })}
         </div>
         
+        {/* --- 4. Modifikasi bagian login/logout untuk Desktop --- */}
         <div className="hidden md:flex items-center space-x-4">
             {isLoggedIn ? (
-                // Jika sudah login, tampilkan skor
-                <div className="flex items-center space-x-2 bg-gray-800/50 px-3 py-1 rounded-full">
-                    <FaCoins className="text-yellow-400" />
-                    <span className="font-bold text-white">{score}</span>
-                </div>
+                // Jika sudah login, tampilkan skor DAN tombol logout
+                <>
+                    <div className="flex items-center space-x-2 bg-gray-800/50 px-3 py-1 rounded-full">
+                        <FaCoins className="text-yellow-400" />
+                        <span className="font-bold text-white">{score}</span>
+                    </div>
+                    <button 
+                        onClick={handleLogout}
+                        className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm"
+                    >
+                        Keluar
+                    </button>
+                </>
             ) : (
                 // Jika belum login, tampilkan tombol Login
                 <Link
@@ -95,6 +113,7 @@ const Navbar = () => {
                 </Link>
             )}
         </div>
+        {/* ---------------------------------------------------- */}
 
         {/* Hamburger Icon */}
         <div className="md:hidden z-50 relative">
@@ -118,22 +137,31 @@ const Navbar = () => {
                 </Link>
               ))}
               
-              {/* Skor atau Tombol Login (Mobile) */}
-              <div className="pt-2 border-t border-gray-600">
-                {isLoggedIn ? (
-                    <div className="flex items-center space-x-2 text-base font-medium">
-                        <FaCoins className="text-yellow-400" />
-                        <span className="text-white">{score} Poin</span>
-                    </div>
-                ) : (
-                    <Link
-                      href="/login"
-                      className="block w-full bg-green-500 hover:bg-green-600 text-white text-center font-bold py-2 rounded-lg transition"
-                    >
-                      Masuk
-                    </Link>
-                )}
+              {/* --- 5. Modifikasi bagian login/logout untuk Mobile --- */}
+              <div className="pt-4 mt-2 border-t border-gray-600 space-y-4">
+                  {isLoggedIn ? (
+                      <>
+                          <div className="flex items-center space-x-2 text-base font-medium">
+                              <FaCoins className="text-yellow-400" />
+                              <span className="text-white">{score} Poin</span>
+                          </div>
+                          <button 
+                              onClick={handleLogout}
+                              className="block w-full bg-red-500 hover:bg-red-600 text-white text-center font-bold py-2 rounded-lg transition"
+                          >
+                              Keluar
+                          </button>
+                      </>
+                  ) : (
+                      <Link
+                        href="/login"
+                        className="block w-full bg-green-500 hover:bg-green-600 text-white text-center font-bold py-2 rounded-lg transition"
+                      >
+                        Masuk
+                      </Link>
+                  )}
               </div>
+              {/* --------------------------------------------------- */}
             </div>
           )}
         </div>

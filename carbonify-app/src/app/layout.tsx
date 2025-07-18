@@ -9,6 +9,10 @@ import FallingLeaves from '@/components/FallingLeaves';
 import 'leaflet/dist/leaflet.css';
 import './globals.css';
 
+// Impor font standar Next.js
+import { Inter } from "next/font/google";
+const inter = Inter({ subsets: ["latin"] });
+
 export default function RootLayout({
   children,
 }: {
@@ -18,7 +22,8 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body>
+      {/* Tambahkan className ke tag body */}
+      <body className={`${inter.className} bg-gray-900 text-white overflow-x-hidden`}>
         <GoogleOAuthProvider clientId={googleClientId}>
           <GamificationProvider>
             <FallingLeaves />
