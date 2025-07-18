@@ -20,7 +20,7 @@ export default function Home() {
           {/* Main Hero Content */}
           <div className="mb-8 md:mb-12">
             <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-green-400 via-emerald-300 to-cyan-400 bg-clip-text text-transparent leading-tight">
-              Aksi Nyata Untuk bumi yang lebih sehat.
+              Aksi nyata untuk bumi yang lebih sehat.
             </h3>              
             <div className="mb-8 md:mb-10">
               <TypeAnimation
@@ -163,7 +163,7 @@ export default function Home() {
               Fitur Interaktif Carbonify
             </h2>
             <p className="max-w-3xl mx-auto text-gray-400 text-base md:text-lg px-4">
-              Platform web interaktif yang menggabungkan edukasi, visualisasi data, dan aksi nyata untuk 
+              Platform web interaktif yang menggabungkan edukasi, teknologi, dan aksi nyata untuk 
               meningkatkan kesadaran tentang jejak karbon dan perubahan iklim.
             </p>
           </div>

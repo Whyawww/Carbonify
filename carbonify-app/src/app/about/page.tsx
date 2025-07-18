@@ -22,7 +22,7 @@ export default function AboutPage() {
             <p>
               <strong>Carbonify</strong> lahir dari keprihatinan mendalam
               terhadap isu perubahan iklim yang dampaknya semakin nyata kita
-              rasakan. Kami percaya bahwa teknologi dapat menjadi jembatan
+              rasakan. Kami percaya bahwa teknolo0gi dapat menjadi jembatan
               antara kesadaran dan aksi nyata. Proyek ini dikembangkan sebagai
               bagian dari{' '}
               <strong className="text-white">
