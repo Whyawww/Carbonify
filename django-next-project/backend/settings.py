@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'rest_framework',
+    'rest_framework.authtoken',
     'django_filters',
     'drf_spectacular',
     'corsheaders',
@@ -146,3 +147,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+GOOGLE_CLIENT_ID = "713677412866-hsrqjr4f2ph6lneods4b9dc0lael170i.apps.googleusercontent.com"
