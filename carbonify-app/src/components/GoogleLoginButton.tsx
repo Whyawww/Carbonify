@@ -2,11 +2,13 @@
 
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google'; 
 import { useRouter } from 'next/navigation';
+import { useNotification } from '@/context/NotificationContext'; // <-- 1. Impor hook notifikasi
 
 const GoogleLoginButton = () => {
   const router = useRouter();
+  const { showNotification } = useNotification(); // <-- 2. Panggil hook notifikasi
 
-const handleSuccess = async (credentialResponse: CredentialResponse) => {
+  const handleSuccess = async (credentialResponse: CredentialResponse) => {
     try {
       const response = await fetch('http://127.0.0.1:8000/api/v1/auth/google/', {
         method: 'POST',
@@ -14,7 +16,6 @@ const handleSuccess = async (credentialResponse: CredentialResponse) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          // Ganti 'access_token' menjadi 'token' agar sesuai dengan backend
           token: credentialResponse.credential, 
         }),
       });
@@ -24,20 +25,24 @@ const handleSuccess = async (credentialResponse: CredentialResponse) => {
         throw new Error(data.detail || 'Login dengan Google gagal di backend.');
       }
       
-      // Simpan token dari backend kita, bukan token Google
       localStorage.setItem('accessToken', data.token); 
+      
+      // ✅ 3. Ganti alert() dengan notifikasi toast
+      showNotification('Anda berhasil login.', 'success');
       
       router.push('/');
       router.refresh();
     } catch (error) {
       console.error(error);
-      alert('Login Gagal. Pastikan backend Anda berjalan dan Client ID sudah benar.');
+      // Ganti alert() dengan notifikasi error
+      showNotification('Login Gagal. Pastikan backend Anda berjalan.', 'error');
     }
-};
+  };
 
   const handleError = () => {
     console.error('Login dengan Google Gagal');
-    alert('Terjadi kesalahan saat mencoba login dengan Google.');
+    // Ganti alert() dengan notifikasi error
+    showNotification('Terjadi kesalahan saat mencoba login dengan Google.', 'error');
   };
 
   return (

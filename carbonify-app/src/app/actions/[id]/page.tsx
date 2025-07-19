@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import Link from 'next/link';
 
 // Tipe data untuk detail Aksi
 interface ActionDetail {
+  image: string | Blob | undefined;
   id: number;
   emoji: string;
   title: string;
@@ -25,15 +26,15 @@ const InfoBadge = ({ label, value, colorClass }: { label: string, value: string,
   </div>
 );
 
-export default function ActionDetailPage({ params }: { params: { id: string } }) {
+export default function ActionDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  // PERBAIKAN: Gunakan React.use() untuk unwrap params Promise
+  const { id } = use(params);
+  
   const [action, setAction] = useState<ActionDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
   useEffect(() => {
-    // PERBAIKAN: Ambil 'id' di dalam useEffect untuk memastikan 'params' sudah siap
-    const { id } = params;
-
     // Jika tidak ada ID di URL, hentikan proses dan tampilkan error
     if (!id) {
         setLoading(false);
@@ -63,7 +64,7 @@ export default function ActionDetailPage({ params }: { params: { id: string } })
     }
 
     fetchActionDetail();
-  }, [params]); // PERBAIKAN: Gunakan 'params' sebagai dependency
+  }, [id]); // PERBAIKAN: Gunakan 'id' sebagai dependency karena sudah di-unwrap
 
   if (loading) {
     return <div className="min-h-screen flex justify-center items-center"><p className="text-xl text-gray-400">Memuat detail aksi...</p></div>;
@@ -94,8 +95,8 @@ export default function ActionDetailPage({ params }: { params: { id: string } })
         </div>
 
         <article className="bg-gray-900/30 backdrop-blur-lg border border-gray-700 rounded-2xl overflow-hidden">
-          {action.image_url && (
-            <img src={action.image_url} alt={action.title} className="w-full h-64 object-cover" />
+          {action.image && (
+            <img src={action.image} alt={action.title} className="w-full h-64 object-cover" />
           )}
           
           <div className="p-8">
@@ -118,7 +119,7 @@ export default function ActionDetailPage({ params }: { params: { id: string } })
             </div>
             
             <div 
-              className="prose prose-invert prose-lg max-w-none prose-p:text-gray-300 prose-li:text-gray-300 prose-a:text-cyan-400 hover:prose-a:text-cyan-300 prose-strong:text-white prose-headings:text-white"
+              className="prose prose-invert prose-lg max-w-none prose-p:text-gray-300 prose-li:text-gray-300" 
               dangerouslySetInnerHTML={{ __html: action.content || "" }} 
             />
 

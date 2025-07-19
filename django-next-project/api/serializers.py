@@ -9,13 +9,24 @@ class ActionSerializer(serializers.ModelSerializer):
 
 # Serializer untuk halaman detail Aksi
 class ActionDetailSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+    
     class Meta:
         model = Action
-        # PERBAIKAN: Tambahkan semua field baru untuk halaman detail
         fields = [
             'id', 'emoji', 'title', 'description', 'category', 'content', 
-            'impact_level', 'effort_level', 'image_url', 'related_links'
+            'impact_level', 'effort_level', 'image', 'related_links'
         ]
+    
+    def get_image(self, obj):
+        if obj.image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            else:
+                # Fallback untuk development
+                return f"http://127.0.0.1:8000{obj.image.url}"
+        return None
 
 # Serializer lainnya (tidak berubah)
 class EcoPointSerializer(serializers.ModelSerializer):

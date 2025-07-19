@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { TypeAnimation } from 'react-type-animation';
-import Link from 'next/link'; // Impor Link dari Next.js
+import Link from 'next/link';
 
 // Tipe data untuk pilihan dari API
 interface Choice {
@@ -21,6 +21,7 @@ interface Breakdown {
 
 // Tipe data untuk hasil analisis dari API
 interface AnalysisResult {
+  exceeded_categories: string[]; // ✅ DIPERBAIKI: dari never[] menjadi string[]
   limit: number;
   is_over_limit: boolean;
   excess_details: {
@@ -132,20 +133,24 @@ export default function CalculatorPage() {
     });
   };
 
-  // --- FUNGSI RENDER HASIL YANG DIPERBARUI TOTAL ---
   const renderResult = () => {
     if (!analysis || !breakdown) return null;
 
-    const categoriesOverLimit = analysis.excess_details.map(d => d.category);
+    const categoriesOverLimit = analysis.exceeded_categories || [];
 
     let actionLink = '/actions';
-    let actionText = 'Lihat Aksi untuk Mempertahankan';
+    let actionText = 'Lihat Semua Aksi';
     let actionButtonClass = 'bg-cyan-500 hover:bg-cyan-600';
 
-    if (analysis.is_over_limit) {
-        actionLink = `/actions?highlight=${categoriesOverLimit.join(',')}`;
+    if (analysis.is_over_limit && categoriesOverLimit.length > 0) {
+      // ✅ DIPERBAIKI: Filter kategori kosong sebelum digabungkan
+      const validCategories = categoriesOverLimit.filter(cat => cat); 
+      
+      if (validCategories.length > 0) {
+        actionLink = `/calculate/recommendations?categories=${validCategories.join(',')}`;
         actionText = 'Lihat Cara Menguranginya';
         actionButtonClass = 'bg-yellow-500 hover:bg-yellow-600';
+      }
     }
 
     const cardContainerClass = analysis.is_over_limit
@@ -168,7 +173,6 @@ export default function CalculatorPage() {
       <div className={cardContainerClass}>
         <div className="bg-gray-900/80 backdrop-blur-lg p-8 rounded-2xl grid md:grid-cols-2 md:gap-8">
           
-          {/* --- KOLOM KIRI: SKOR UTAMA & TOMBOL --- */}
           <div className="text-center md:text-left flex flex-col justify-between">
             <div>
               <h2 className={cardHeaderClass}>{cardHeaderText}</h2>
@@ -188,7 +192,6 @@ export default function CalculatorPage() {
             </div>
           </div>
 
-          {/* --- KOLOM KANAN: RINCIAN & REKOMENDASI --- */}
           <div className="mt-8 md:mt-0 md:border-l md:border-gray-700 md:pl-8">
             <div className="border-b border-gray-700 pb-4">
               <h3 className="text-xl font-semibold mb-3 text-white">Rincian Emisi Anda</h3>
@@ -230,7 +233,7 @@ export default function CalculatorPage() {
   
   return (
     <div className="min-h-screen w-full flex items-center justify-center pt-32 pb-20">
-      <div className="container mx-auto px-4 max-w-4xl"> {/* Perlebar kontainer */}
+      <div className="container mx-auto px-4 max-w-4xl">
         <h1 className="text-4xl font-bold text-center mb-2">
           Kalkulator Jejak Karbon
         </h1>
@@ -251,7 +254,6 @@ export default function CalculatorPage() {
               onSubmit={handleSubmit}
               className="bg-gray-900/80 backdrop-blur-lg p-8 rounded-2xl space-y-6"
             >
-              {/* Form inputs... (tidak berubah) */}
               <div>
                 <label className="block text-lg font-medium mb-2">Listrik</label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
