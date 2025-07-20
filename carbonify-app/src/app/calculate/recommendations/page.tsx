@@ -4,7 +4,6 @@ import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-// Tipe data untuk Aksi
 interface Action {
   id: number;
   emoji: string;
@@ -13,7 +12,6 @@ interface Action {
   category: string;
 }
 
-// Komponen utama untuk logika halaman
 function RecommendationsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -23,37 +21,17 @@ function RecommendationsContent() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!categoriesParam) {
-      router.push('/calculate');
-      return;
-    }
-
-    async function fetchAndFilterActions() {
+    async function fetchAndFilterActions(categories: string) {
       setLoading(true);
       try {
         const response = await fetch('http://127.0.0.1:8000/api/v1/actions/');
         const allActions: Action[] = await response.json();
         
-        const categoriesToHighlight = categoriesParam.toLowerCase().split(',');
+        const categoriesToHighlight = categories.toLowerCase().split(',');
         
-        // --- KODE DEBUGGING ---
-        console.log("Kategori dari URL:", categoriesToHighlight);
-        console.log("Semua Aksi dari API:", allActions);
-        // --------------------
-
-        const filteredActions = allActions.filter(action => {
-          const isIncluded = categoriesToHighlight.includes(action.category.toLowerCase());
-          // --- KODE DEBUGGING ---
-          if (isIncluded) {
-            console.log(`✅ DITEMUKAN: Aksi '${action.title}' cocok dengan kategori '${action.category}'`);
-          }
-          // --------------------
-          return isIncluded;
-        });
-        
-        // --- KODE DEBUGGING ---
-        console.log("Hasil Aksi yang Difilter:", filteredActions);
-        // --------------------
+        const filteredActions = allActions.filter(action => 
+          categoriesToHighlight.includes(action.category.toLowerCase())
+        );
         
         setRecommendedActions(filteredActions);
       } catch (error) {
@@ -62,12 +40,16 @@ function RecommendationsContent() {
         setLoading(false);
       }
     }
-    fetchAndFilterActions();
+
+    if (categoriesParam) {
+      fetchAndFilterActions(categoriesParam);
+    } else {
+      router.push('/calculate');
+    }
   }, [categoriesParam, router]);
 
   
-  // Komponen Kartu Aksi
-   const ActionCard = ({ action }: { action: Action }) => (
+  const ActionCard = ({ action }: { action: Action }) => (
     <Link 
       href={`/actions/${action.id}`} 
       key={action.id} 
@@ -111,19 +93,18 @@ function RecommendationsContent() {
           </p>
         )}
          <div className="text-center mt-16">
-             <Link 
-              href="/actions"
-              className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-8 rounded-full transition-colors text-lg"
-            >
-              Lihat Semua Aksi Lainnya
-            </Link>
-        </div>
+            <Link 
+             href="/actions"
+             className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-8 rounded-full transition-colors text-lg"
+           >
+             Lihat Semua Aksi Lainnya
+           </Link>
+       </div>
       </div>
     </div>
   );
 }
 
-// Bungkus dengan Suspense
 export default function RecommendationsPage() {
   return (
     <Suspense fallback={<div className="flex justify-center items-center h-screen">Memuat halaman...</div>}>

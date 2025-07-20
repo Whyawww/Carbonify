@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { TypeAnimation } from 'react-type-animation';
 import Link from 'next/link';
 
-// Tipe data untuk pilihan dari API
 interface Choice {
   id: number;
   provinsi?: string;
@@ -12,16 +11,14 @@ interface Choice {
   jenis_makanan?: string;
 }
 
-// Tipe data untuk rincian emisi
 interface Breakdown {
   listrik: number;
   transportasi: number;
   konsumsi: number;
 }
 
-// Tipe data untuk hasil analisis dari API
 interface AnalysisResult {
-  exceeded_categories: string[]; // ✅ DIPERBAIKI: dari never[] menjadi string[]
+  exceeded_categories: string[];
   limit: number;
   is_over_limit: boolean;
   excess_details: {
@@ -143,9 +140,7 @@ export default function CalculatorPage() {
     let actionButtonClass = 'bg-cyan-500 hover:bg-cyan-600';
 
     if (analysis.is_over_limit && categoriesOverLimit.length > 0) {
-      // ✅ DIPERBAIKI: Filter kategori kosong sebelum digabungkan
       const validCategories = categoriesOverLimit.filter(cat => cat); 
-      
       if (validCategories.length > 0) {
         actionLink = `/calculate/recommendations?categories=${validCategories.join(',')}`;
         actionText = 'Lihat Cara Menguranginya';

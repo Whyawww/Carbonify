@@ -2,11 +2,12 @@
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, viewsets
-from rest_framework.authtoken.models import Token # <-- Diimpor untuk token backend
+from rest_framework import status, viewsets, generics
+from rest_framework.authtoken.models import Token
 from django_filters.rest_framework import FilterSet, CharFilter
-from django.contrib.auth.models import User # <-- Diimpor untuk manajemen pengguna
-from django.conf import settings # <-- Diimpor untuk mengakses settings.py
+from django.contrib.auth.models import User
+from django.conf import settings 
+from rest_framework.permissions import IsAuthenticated
 
 # Import untuk verifikasi Google
 from google.oauth2 import id_token
@@ -15,12 +16,12 @@ from google.auth.transport import requests
 from math import radians, sin, cos, sqrt, atan2
 from .models import (
     Action, EcoPoint,
-    FaktorEmisiListrik, FaktorEmisiTransportasi, FaktorEmisiMakanan
+    FaktorEmisiListrik, FaktorEmisiTransportasi, FaktorEmisiMakanan, UserProfile
 )
 from .serializers import (
     ActionSerializer, EcoPointSerializer,
     FaktorEmisiListrikSerializer, FaktorEmisiTransportasiSerializer, FaktorEmisiMakananSerializer,
-    ActionDetailSerializer
+    ActionDetailSerializer, LeaderboardSerializer
 )
 
 # +++ KODE BARU UNTUK LOGIN GOOGLE +++
@@ -235,3 +236,47 @@ class CarbonCalculatorView(APIView):
         }
         
         return Response(hasil, status=status.HTTP_200_OK)
+    
+# Fungsi helper untuk lencana (jika belum ada)
+def check_and_award_badges(profile):
+    newly_awarded_badges = []
+    if profile.score > 100 and 'aktivis_pemula' not in profile.badges:
+        profile.badges.append('aktivis_pemula')
+        newly_awarded_badges.append({"name": "Aktivis Pemula", "description": "Mencapai 100 poin pertama!"})
+    if profile.score > 500 and 'master_aksi' not in profile.badges:
+        profile.badges.append('master_aksi')
+        newly_awarded_badges.append({"name": "Master Aksi", "description": "Luar biasa! Mencapai 500 poin."})
+    return newly_awarded_badges
+
+# View untuk menyelesaikan aksi
+class CompleteActionView(APIView):
+    permission_classes = [IsAuthenticated] # Ini akan memeriksa token secara otomatis
+
+    def post(self, request, *args, **kwargs):
+        points_to_add = request.data.get('points')
+        if points_to_add is None:
+            return Response({'error': 'Points not provided'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            profile, created = UserProfile.objects.get_or_create(user=request.user)
+            profile.score += int(points_to_add)
+            
+            new_badges = check_and_award_badges(profile)
+            
+            profile.save()
+
+            return Response({
+                'success': 'Score updated', 
+                'new_score': profile.score,
+                'new_badges_awarded': new_badges
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# View untuk leaderboard
+class LeaderboardView(generics.ListAPIView):
+    serializer_class = LeaderboardSerializer
+    
+    def get_queryset(self):
+        return UserProfile.objects.order_by('-score')[:10]

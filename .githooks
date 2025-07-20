@@ -1,0 +1,25 @@
+#!/bin/sh
+# .githooks/pre-push
+
+echo "Running validation script before push..."
+
+# Pindah ke direktori frontend untuk menjalankan skrip npm
+cd frontend
+
+# Jalankan npm run validate
+npm run validate
+
+# Cek hasil dari skrip validasi
+if [ $? -ne 0 ]; then
+    echo "----------------------------------------"
+    echo "ERROR: Validation failed! Push aborted."
+    echo "Please fix the linting/formatting errors and try again."
+    echo "----------------------------------------"
+    exit 1
+fi
+
+# Kembali ke direktori root
+cd ..
+
+echo "Validation successful! Proceeding with push."
+exit 0

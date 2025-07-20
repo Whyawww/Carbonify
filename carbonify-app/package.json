@@ -6,7 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "format": "prettier --write . --ignore-path .gitignore",
+    "validate": "npm run lint && npm run format"
   },
   "dependencies": {
     "@react-oauth/google": "^0.12.2",

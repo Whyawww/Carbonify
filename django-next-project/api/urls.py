@@ -3,13 +3,15 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
-    GoogleLoginView, # <-- Impor view baru
+    GoogleLoginView,
     CarbonCalculatorView, 
     ActionViewSet, 
     EcoPointViewSet,
     FaktorEmisiListrikViewSet,
     FaktorEmisiTransportasiViewSet,
-    FaktorEmisiMakananViewSet
+    FaktorEmisiMakananViewSet,
+    CompleteActionView, 
+    LeaderboardView 
 )
 
 v1_router = DefaultRouter()
@@ -26,5 +28,8 @@ urlpatterns = [
     path('auth/google/', GoogleLoginView.as_view(), name='google_login'),
 
     path('calculate/', CarbonCalculatorView.as_view(), name='calculate_carbon'),
+
+    path('complete-action/', CompleteActionView.as_view(), name='complete-action'),
+    path('leaderboard/', LeaderboardView.as_view(), name='leaderboard'),
     path('', include(v1_router.urls)),
 ]

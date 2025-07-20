@@ -12,10 +12,9 @@ const GoogleLoginButton = () => {
     try {
       const response = await fetch('http://127.0.0.1:8000/api/v1/auth/google/', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          // Ganti 'access_token' menjadi 'token' agar sesuai dengan backend
           token: credentialResponse.credential, 
         }),
       });

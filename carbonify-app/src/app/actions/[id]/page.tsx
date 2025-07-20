@@ -1,24 +1,23 @@
 'use client';
 
-import { useEffect, useState, use } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 // Tipe data untuk detail Aksi
 interface ActionDetail {
-  image: string | Blob | undefined;
   id: number;
   emoji: string;
   title: string;
   description: string;
   category: string;
-  content: string; // Konten detail dari CKEditor
+  content: string;
   impact_level: string;
   effort_level: string;
-  image_url: string | null;
+  image: string | null;
   related_links: string | null;
 }
 
-// Komponen kecil untuk menampilkan label metadata
 const InfoBadge = ({ label, value, colorClass }: { label: string, value: string, colorClass: string }) => (
   <div className="flex flex-col items-center justify-center bg-gray-800/50 p-3 rounded-lg text-center">
     <span className="text-sm text-gray-400">{label}</span>
@@ -26,16 +25,14 @@ const InfoBadge = ({ label, value, colorClass }: { label: string, value: string,
   </div>
 );
 
-export default function ActionDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  // PERBAIKAN: Gunakan React.use() untuk unwrap params Promise
-  const { id } = use(params);
+export default function ActionDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params;
   
   const [action, setAction] = useState<ActionDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
   useEffect(() => {
-    // Jika tidak ada ID di URL, hentikan proses dan tampilkan error
     if (!id) {
         setLoading(false);
         setError('ID Aksi tidak ditemukan di URL.');
@@ -47,7 +44,6 @@ export default function ActionDetailPage({ params }: { params: Promise<{ id: str
         const response = await fetch(`http://127.0.0.1:8000/api/v1/actions/${id}/`);
         
         if (!response.ok) {
-          // Berikan pesan error yang lebih spesifik berdasarkan status
           if (response.status === 404) {
              throw new Error('Aksi dengan ID ini tidak ditemukan di database.');
           }
@@ -56,15 +52,19 @@ export default function ActionDetailPage({ params }: { params: Promise<{ id: str
         
         const data = await response.json();
         setAction(data);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        if (err instanceof Error) {
+            setError(err.message);
+        } else {
+            setError('Terjadi kesalahan yang tidak diketahui.');
+        }
       } finally {
         setLoading(false);
       }
     }
 
     fetchActionDetail();
-  }, [id]); // PERBAIKAN: Gunakan 'id' sebagai dependency karena sudah di-unwrap
+  }, [id]);
 
   if (loading) {
     return <div className="min-h-screen flex justify-center items-center"><p className="text-xl text-gray-400">Memuat detail aksi...</p></div>;
@@ -75,14 +75,11 @@ export default function ActionDetailPage({ params }: { params: Promise<{ id: str
   }
 
   if (!action) {
-      // Fallback jika terjadi kondisi aneh dimana tidak ada error tapi juga tidak ada data
       return <div className="min-h-screen flex justify-center items-center"><p className="text-xl text-gray-400">Tidak ada data aksi untuk ditampilkan.</p></div>;
   }
 
-  // Logika untuk warna badge
   const impactColor = action.impact_level === 'Tinggi' ? 'text-red-400' : action.impact_level === 'Sedang' ? 'text-yellow-400' : 'text-green-400';
   const effortColor = action.effort_level === 'Sulit' ? 'text-red-400' : action.effort_level === 'Sedang' ? 'text-yellow-400' : 'text-green-400';
-
   const links = action.related_links?.split('\n').filter(link => link.trim() !== '');
 
   return (
@@ -96,18 +93,23 @@ export default function ActionDetailPage({ params }: { params: Promise<{ id: str
 
         <article className="bg-gray-900/30 backdrop-blur-lg border border-gray-700 rounded-2xl overflow-hidden">
           {action.image && (
-            <img src={action.image} alt={action.title} className="w-full h-64 object-cover" />
+            <Image 
+                src={action.image} 
+                alt={action.title} 
+                width={1200} 
+                height={400} 
+                className="w-full h-64 object-cover"
+                priority
+            />
           )}
           
           <div className="p-8">
             <div className="flex flex-col md:flex-row md:items-start gap-6 mb-8">
-              {/* Kolom Kiri: Judul dan Deskripsi */}
               <div className="flex-grow">
                 <span className="text-6xl mb-4 block">{action.emoji}</span>
                 <h1 className="text-4xl font-bold mb-2">{action.title}</h1>
                 <p className="text-lg text-gray-400">{action.description}</p>
               </div>
-              {/* Kolom Kanan: Metadata */}
               <div className="flex-shrink-0 grid grid-cols-3 gap-3 w-full md:w-auto">
                 <div className="flex flex-col items-center justify-center bg-gray-800/50 p-3 rounded-lg text-center">
                     <span className="text-sm text-gray-400">Kategori</span>
@@ -124,18 +126,18 @@ export default function ActionDetailPage({ params }: { params: Promise<{ id: str
             />
 
             {links && links.length > 0 && (
-                <div className="mt-10 border-t border-gray-700 pt-6">
-                    <h3 className="text-xl font-semibold mb-3 text-white">Bacaan Lebih Lanjut</h3>
-                    <ul className="space-y-2">
-                        {links.map((link, index) => (
-                            <li key={index}>
-                                <a href={link} target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300 hover:underline break-all">
-                                    {link}
-                                </a>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+              <div className="mt-10 border-t border-gray-700 pt-6">
+                  <h3 className="text-xl font-semibold mb-3 text-white">Bacaan Lebih Lanjut</h3>
+                  <ul className="space-y-2">
+                      {links.map((link, index) => (
+                          <li key={index}>
+                              <a href={link} target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300 hover:underline break-all">
+                                  {link}
+                              </a>
+                          </li>
+                      ))}
+                  </ul>
+              </div>
             )}
           </div>
         </article>

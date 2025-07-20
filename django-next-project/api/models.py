@@ -1,4 +1,7 @@
 from django.db import models
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from ckeditor.fields import RichTextField
 
 # Model yang sudah ada untuk Aksi dan Peta (biarkan saja)
@@ -102,3 +105,27 @@ class FaktorEmisiMakanan(models.Model):
     class Meta:
         verbose_name = "Faktor Emisi Makanan"
         verbose_name_plural = "Faktor Emisi Makanan"
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    score = models.IntegerField(default=0)
+    badges = models.JSONField(default=list)
+
+    def __str__(self):
+        return self.user.username
+
+    class Meta:
+        verbose_name = "User Profile"
+        verbose_name_plural = "User Profiles"
+
+# Sinyal untuk otomatis membuat UserProfile saat User baru dibuat
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    # Cek apakah profil sudah ada sebelum mencoba menyimpannya
+    if hasattr(instance, 'profile'):
+        instance.profile.save()
