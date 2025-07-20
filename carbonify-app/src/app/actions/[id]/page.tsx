@@ -4,6 +4,7 @@ import { useEffect, useState, use } from 'react';
 import Link from 'next/link';
 
 interface ActionDetail {
+  image: string | Blob | undefined;
   id: number;
   emoji: string;
   title: string;
@@ -36,7 +37,6 @@ export default function ActionDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  // 3. Gunakan hook 'use' untuk mendapatkan 'id'
   const { id } = use(params);
 
   const [action, setAction] = useState<ActionDetail | null>(null);
@@ -64,12 +64,10 @@ export default function ActionDetailPage({
         }
 
         const data = await response.json();
-        setAction(data);
+        setAction(data as ActionDetail);
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
-        } else {
-          setError('Terjadi kesalahan yang tidak diketahui.');
         }
       } finally {
         setLoading(false);
@@ -135,9 +133,9 @@ export default function ActionDetailPage({
         </div>
 
         <article className="bg-gray-900/30 backdrop-blur-lg border border-gray-700 rounded-2xl overflow-hidden">
-          {action.image_url && (
+          {action.image && (
             <img
-              src={action.image_url}
+              src={action.image}
               alt={action.title}
               className="w-full h-64 object-cover"
             />
@@ -173,7 +171,7 @@ export default function ActionDetailPage({
             </div>
 
             <div
-              className="prose prose-invert prose-lg max-w-none prose-p:text-gray-300 prose-li:text-gray-300 prose-a:text-cyan-400 hover:prose-a:text-cyan-300 prose-strong:text-white prose-headings:text-white"
+              className="prose prose-invert prose-lg max-w-none prose-p:text-gray-300 prose-li:text-gray-300"
               dangerouslySetInnerHTML={{ __html: action.content || '' }}
             />
 
