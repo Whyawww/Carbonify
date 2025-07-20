@@ -1,8 +1,17 @@
 # api/views.py
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
+from rest_framework.authtoken.models import Token # <-- Diimpor untuk token backend
 from django_filters.rest_framework import FilterSet, CharFilter
+from django.contrib.auth.models import User # <-- Diimpor untuk manajemen pengguna
+from django.conf import settings # <-- Diimpor untuk mengakses settings.py
+
+# Import untuk verifikasi Google
+from google.oauth2 import id_token
+from google.auth.transport import requests
+
 from math import radians, sin, cos, sqrt, atan2
 from .models import (
     Action, EcoPoint,
@@ -10,8 +19,56 @@ from .models import (
 )
 from .serializers import (
     ActionSerializer, EcoPointSerializer,
-    FaktorEmisiListrikSerializer, FaktorEmisiTransportasiSerializer, FaktorEmisiMakananSerializer
+    FaktorEmisiListrikSerializer, FaktorEmisiTransportasiSerializer, FaktorEmisiMakananSerializer,
+    ActionDetailSerializer
 )
+
+# +++ KODE BARU UNTUK LOGIN GOOGLE +++
+class GoogleLoginView(APIView):
+    def post(self, request, *args, **kwargs):
+        auth_token = request.data.get('token')
+        if not auth_token:
+            return Response(
+                {"error": "Token Google tidak ditemukan."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            # Verifikasi token dengan Google
+            idinfo = id_token.verify_oauth2_token(
+                auth_token, requests.Request(), settings.GOOGLE_CLIENT_ID
+            )
+            
+            email = idinfo['email']
+            name = idinfo.get('name', '')
+
+            user, created = User.objects.get_or_create(
+                email=email,
+                defaults={'username': email, 'first_name': name}
+            )
+
+            token, created = Token.objects.get_or_create(user=user)
+            
+            return Response({
+                'token': token.key,
+                'user_id': user.pk,
+                'email': user.email,
+                'name': user.first_name
+            }, status=status.HTTP_200_OK)
+
+        except ValueError as e:
+            # Jika verifikasi gagal, kita cetak error detailnya di terminal
+            print("="*50)
+            print("❌ Verifikasi Token GAGAL!")
+            print(f"CLIENT ID DI SETTINGS.PY: {settings.GOOGLE_CLIENT_ID}")
+            print(f"DETAIL ERROR: {e}")
+            print("="*50)
+            
+            return Response(
+                {"error": "Token Google tidak valid.", "details": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
 
 # --- VIEWS UNTUK DATA STATIS (AKSI) ---
 class ActionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -19,7 +76,11 @@ class ActionViewSet(viewsets.ReadOnlyModelViewSet):
     API endpoint untuk menampilkan semua data Aksi Nyata (Action).
     """
     queryset = Action.objects.all()
-    serializer_class = ActionSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return ActionDetailSerializer
+        return ActionSerializer
 
 
 # --- FILTERSET CANGGIH UNTUK ECOPOINT ---
@@ -48,92 +109,65 @@ class EcoPointViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = EcoPointFilter
 
     def list(self, request, *args, **kwargs):
-        # 1. Terapkan filter standar (search, category) terlebih dahulu.
-        #    `filter_queryset` akan menggunakan `filterset_class` kita.
         queryset = self.filter_queryset(self.get_queryset())
-
-        # 2. Ambil parameter lokasi dari URL untuk filter jarak
         params = request.query_params
         lat_user = params.get('lat')
         lon_user = params.get('lon')
         radius_km = params.get('radius')
-
-        # Ini akan menjadi daftar hasil akhir, awalnya dari hasil filter standar.
         final_results = list(queryset)
 
-        # 3. Jika parameter lokasi ada, lakukan perhitungan jarak manual
         if lat_user and lon_user and radius_km:
             try:
                 lat_user = float(lat_user)
                 lon_user = float(lon_user)
                 radius_km = float(radius_km)
-
-                R = 6371  # Radius bumi dalam km
+                R = 6371
                 lat1_rad = radians(lat_user)
-                
                 locations_within_radius = []
                 
-                # Iterasi melalui hasil yang SUDAH DIFILTER
                 for point in queryset:
                     lat2_rad = radians(point.latitude)
                     delta_lat = lat2_rad - lat1_rad
                     delta_lon = radians(point.longitude) - radians(lon_user)
-                    
                     a = sin(delta_lat / 2)**2 + cos(lat1_rad) * cos(lat2_rad) * sin(delta_lon / 2)**2
                     c = 2 * atan2(sqrt(a), sqrt(1 - a))
                     distance = R * c
                     
                     if distance <= radius_km:
-                        point.distance = distance # Tambahkan atribut jarak ke objek
+                        point.distance = distance
                         locations_within_radius.append(point)
                 
-                # Urutkan berdasarkan jarak dan perbarui hasil akhir
                 locations_within_radius.sort(key=lambda x: x.distance)
                 final_results = locations_within_radius
 
             except (ValueError, TypeError):
-                # Jika parameter lokasi tidak valid, abaikan dan gunakan hasil filter standar
                 pass
         
-        # 4. Serialisasi hasil akhir dan kirim sebagai respons
         serializer = self.get_serializer(final_results, many=True)
         return Response(serializer.data)
 
 
 # --- VIEWS UNTUK PILIHAN FAKTOR EMISI ---
 class FaktorEmisiListrikViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    API endpoint untuk menyediakan pilihan Provinsi/Jaringan Listrik.
-    """
     queryset = FaktorEmisiListrik.objects.all().order_by('provinsi')
     serializer_class = FaktorEmisiListrikSerializer
 
 class FaktorEmisiTransportasiViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    API endpoint untuk menyediakan pilihan Jenis Kendaraan.
-    """
     queryset = FaktorEmisiTransportasi.objects.all().order_by('jenis_kendaraan')
     serializer_class = FaktorEmisiTransportasiSerializer
 
 class FaktorEmisiMakananViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    API endpoint untuk menyediakan pilihan Jenis Makanan.
-    """
     queryset = FaktorEmisiMakanan.objects.all().order_by('jenis_makanan')
     serializer_class = FaktorEmisiMakananSerializer
 
 
 # --- VIEW KALKULATOR ---
 class CarbonCalculatorView(APIView):
-    """
-    API view untuk menghitung jejak karbon berdasarkan input dinamis dari pengguna.
-    """
     def post(self, request, *args, **kwargs):
         try:
             listrik_kwh = float(request.data.get('listrik_kwh', 0))
             transportasi_km = float(request.data.get('transportasi_km', 0))
             makanan_porsi = float(request.data.get('makanan_porsi', 0))
-            
             listrik_id = int(request.data.get('listrik_id'))
             transportasi_id = int(request.data.get('transportasi_id'))
             makanan_id = int(request.data.get('makanan_id'))
@@ -150,15 +184,43 @@ class CarbonCalculatorView(APIView):
         emisi_listrik = listrik_kwh * faktor_listrik_obj.faktor
         emisi_transportasi = transportasi_km * faktor_transportasi_obj.faktor
         emisi_konsumsi = makanan_porsi * faktor_makanan_obj.faktor
-
         total_emisi = emisi_listrik + emisi_transportasi + emisi_konsumsi
+        LIMIT_MAKSIMAL = 250
+        BENCHMARK_LISTRIK = 100
+        BENCHMARK_TRANSPORTASI = 75
+        BENCHMARK_KONSUMSI = 75
+        is_over_limit = total_emisi > LIMIT_MAKSIMAL
+        excess_details = []
 
+        if emisi_listrik > BENCHMARK_LISTRIK:
+            excess_details.append({
+                "category": "Listrik", "emoji": "💡",
+                "message": f"Penggunaan listrik Anda menghasilkan {emisi_listrik:.1f} kg CO₂e, melebihi batas wajar ({BENCHMARK_LISTRIK} kg). Coba kurangi dengan mematikan alat yang tidak terpakai."
+            })
+
+        if emisi_transportasi > BENCHMARK_TRANSPORTASI:
+            excess_details.append({
+                "category": "Transportasi", "emoji": "🚗",
+                "message": f"Jejak transportasi Anda sebesar {emisi_transportasi:.1f} kg CO₂e, di atas batas wajar ({BENCHMARK_TRANSPORTASI} kg). Pertimbangkan menggunakan transportasi publik atau bersepeda." 
+            })
+
+        if emisi_konsumsi > BENCHMARK_KONSUMSI:
+            excess_details.append ({
+                "category": "Konsumsi", "emoji": "🍔",
+                "message": f"Emisi dari konsumsi makanan Anda adalah {emisi_konsumsi:.1f} kg CO₂e, melebihi batas wajar ({BENCHMARK_KONSUMSI} kg). Mengurangi konsumsi daging adalah langkah efektif."
+            })
+        
         hasil = {
             "totalEmissions": total_emisi,
             "breakdown": {
                 "listrik": round(emisi_listrik, 2),
                 "transportasi": round(emisi_transportasi, 2),
                 "konsumsi": round(emisi_konsumsi, 2),
+            }, 
+            "analysis": {
+                "limit" : LIMIT_MAKSIMAL,
+                "is_over_limit": is_over_limit,
+                "excess_details": excess_details,
             }
         }
         return Response(hasil, status=status.HTTP_200_OK)

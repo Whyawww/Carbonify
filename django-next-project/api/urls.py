@@ -1,7 +1,9 @@
 # api/urls.py
+
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
+    GoogleLoginView, # <-- Impor view baru
     CarbonCalculatorView, 
     ActionViewSet, 
     EcoPointViewSet,
@@ -10,7 +12,6 @@ from .views import (
     FaktorEmisiMakananViewSet
 )
 
-# Ganti nama router menjadi v1_router
 v1_router = DefaultRouter()
 v1_router.register(r'actions', ActionViewSet, basename='action')
 v1_router.register(r'ecopoints', EcoPointViewSet, basename='ecopoint')
@@ -20,7 +21,10 @@ v1_router.register(r'choices/makanan', FaktorEmisiMakananViewSet, basename='choi
 
 # URL yang tidak menggunakan router
 urlpatterns = [
+    # +++ URL BARU UNTUK LOGIN GOOGLE +++
+    # URL ini akan menjadi: /api/v1/auth/google/
+    path('auth/google/', GoogleLoginView.as_view(), name='google_login'),
+
     path('calculate/', CarbonCalculatorView.as_view(), name='calculate_carbon'),
-    # Sertakan URL dari v1_router
     path('', include(v1_router.urls)),
 ]

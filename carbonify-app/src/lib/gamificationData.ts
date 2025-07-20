@@ -1,3 +1,4 @@
+
 export const weeklyChallenges = [
   {
     id: 'wc01',
@@ -17,4 +18,10 @@ export const weeklyChallenges = [
     description: 'Cabut charger, matikan lampu dan alat elektronik saat tidak digunakan selama 7 hari!',
     points: 60,
   },
+];
+
+
+export const badges = [
+  { id: 'badge01', name: 'Pejuang Sampah', description: 'Berhasil memilah sampah pertama kali.' },
+  { id: 'badge02', name: 'Ksatria Transportasi Hijau', description: 'Mengurangi penggunaan kendaraan pribadi.' },
 ];

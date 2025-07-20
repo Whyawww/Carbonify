@@ -1,17 +1,16 @@
 'use client';
-import Head from 'next/head';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { TypeAnimation } from 'react-type-animation';
 import StatCard from '@/components/StatCard';
-import './globals.css';
-
-<Head>
-  <title>Carbonify</title>
-  <meta name="description" content="Platform edukasi dan aksi jejak karbon" />
-</Head>
+import { weeklyChallenge } from '@/lib/gamificationData';
+import { useGamification } from '@/context/GamificationContext';
 
 export default function Home() {
+  // Ambil fungsi addScore dari context gamifikasi
+  const { addScore } = useGamification();
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -21,7 +20,7 @@ export default function Home() {
           <div className="mb-8 md:mb-12">
             <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-green-400 via-emerald-300 to-cyan-400 bg-clip-text text-transparent leading-tight">
               Aksi Nyata Untuk bumi yang lebih sehat.
-            </h3>              
+            </h3>
             <div className="mb-8 md:mb-10">
               <TypeAnimation
                 sequence={[
@@ -38,7 +37,6 @@ export default function Home() {
                 repeat={Infinity}
               />
             </div>
-            
             <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 lg:space-x-6 mb-12 md:mb-16 px-4">
               <Link
                 href="/calculate"
@@ -56,7 +54,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Hero Images Grid - Responsive */}
+          {/* Hero Images Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12 md:mb-16">
             <div className="group relative overflow-hidden rounded-2xl shadow-2xl">
               <Image
@@ -73,7 +71,6 @@ export default function Home() {
                 <p className="text-gray-300 text-xs md:text-sm">Pelajari dan hitung dampak karbon Anda melalui alat interaktif yang informatif dan mudah digunakan.</p>
               </div>
             </div>
-
             <div className="group relative overflow-hidden rounded-2xl shadow-2xl">
               <Image
                 src="/images/Kesadaran.jpg"
@@ -88,7 +85,6 @@ export default function Home() {
                 <p className="text-gray-300 text-xs md:text-sm">Pahami gaya hidup anda untuk menyadarkan tentang konsekuensi dari emisi karbon terhadap lingkungan dan iklim global.</p>
               </div>
             </div>
-
             <div className="group relative overflow-hidden rounded-2xl shadow-2xl sm:col-span-2 lg:col-span-1">
               <Image
                 src="/images/Aksinyata.jpg"
@@ -115,11 +111,9 @@ export default function Home() {
               Mengapa Kita Harus Bertindak?
             </h2>
             <p className="max-w-4xl mx-auto text-gray-400 text-base md:text-lg leading-relaxed px-4">
-              Perubahan iklim adalah tantangan terbesar abad ini. Setiap aktivitas kita menghasilkan jejak karbon yang 
-              mempengaruhi masa depan planet. Saatnya meningkatkan kesadaran dan mengambil aksi nyata.
+              Perubahan iklim adalah tantangan terbesar abad ini. Setiap aktivitas kita menghasilkan jejak karbon yang mempengaruhi masa depan planet. Saatnya meningkatkan kesadaran dan mengambil aksi nyata.
             </p>
           </div>
-          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             <div className="group relative bg-gradient-to-br from-red-900/30 to-orange-900/30 p-6 md:p-8 rounded-xl backdrop-blur-sm border border-red-500/20 hover:border-red-400/50 transition-all duration-300">
               <StatCard
@@ -131,7 +125,6 @@ export default function Home() {
               />
               <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-orange-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
-            
             <div className="group relative bg-gradient-to-br from-yellow-900/30 to-orange-900/30 p-6 md:p-8 rounded-xl backdrop-blur-sm border border-yellow-500/20 hover:border-yellow-400/50 transition-all duration-300">
               <StatCard
                 end={2.18}
@@ -141,7 +134,6 @@ export default function Home() {
               />
               <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/10 to-orange-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
-            
             <div className="group relative bg-gradient-to-br from-blue-900/30 to-cyan-900/30 p-6 md:p-8 rounded-xl backdrop-blur-sm border border-blue-500/20 hover:border-blue-400/50 transition-all duration-300">
               <StatCard
                 end={31.9}
@@ -163,11 +155,9 @@ export default function Home() {
               Fitur Interaktif Carbonify
             </h2>
             <p className="max-w-3xl mx-auto text-gray-400 text-base md:text-lg px-4">
-              Platform web interaktif yang menggabungkan edukasi, visualisasi data, dan aksi nyata untuk 
-              meningkatkan kesadaran tentang jejak karbon dan perubahan iklim.
+              Platform web interaktif yang menggabungkan edukasi, visualisasi data, dan aksi nyata untuk meningkatkan kesadaran tentang jejak karbon dan perubahan iklim.
             </p>
           </div>
-          
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-8 md:mb-12">
             <div className="group relative overflow-hidden rounded-2xl shadow-2xl">
               <Image
@@ -185,7 +175,6 @@ export default function Home() {
                 </p>
               </div>
             </div>
-
             <div className="group relative overflow-hidden rounded-2xl shadow-2xl">
               <Image
                 src="/images/personalized-recommendations.jpg"
@@ -203,8 +192,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-
-          {/* Small features grid - Responsive */}
+          {/* Small features grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
             <div className="group relative overflow-hidden rounded-xl shadow-lg">
               <Image
@@ -219,7 +207,6 @@ export default function Home() {
                 <p className="text-white text-xs md:text-xs font-semibold">Visualisasi Data Iklim</p>
               </div>
             </div>
-            
             <div className="group relative overflow-hidden rounded-xl shadow-lg">
               <Image
                 src="/images/community-platform.jpg"
@@ -233,7 +220,6 @@ export default function Home() {
                 <p className="text-white text-xs md:text-xs font-semibold">Komunitas Aksi Iklim</p>
               </div>
             </div>
-            
             <div className="group relative overflow-hidden rounded-xl shadow-lg">
               <Image
                 src="/images/local-mapping.jpg"
@@ -247,7 +233,6 @@ export default function Home() {
                 <p className="text-white text-xs md:text-xs font-semibold">Pemetaan Dampak Lokal</p>
               </div>
             </div>
-            
             <div className="group relative overflow-hidden rounded-xl shadow-lg">
               <Image
                 src="/images/progress-tracking.jpg"
@@ -273,11 +258,9 @@ export default function Home() {
               Dari Data ke Aksi Nyata!
             </h2>
             <p className="max-w-3xl mx-auto text-gray-400 text-base md:text-lg px-4">
-              Platform interaktif yang menggabungkan teknologi, edukasi, dan komunitas untuk meningkatkan kesadaran 
-              tentang jejak karbon dan mendorong aksi nyata dalam menghadapi perubahan iklim.
+              Platform interaktif yang menggabungkan teknologi, edukasi, dan komunitas untuk meningkatkan kesadaran tentang jejak karbon dan mendorong aksi nyata dalam menghadapi perubahan iklim.
             </p>
           </div>
-          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             <div className="group relative bg-gradient-to-br from-green-900/40 to-emerald-900/40 p-6 md:p-8 rounded-xl backdrop-blur-sm border border-green-500/20 hover:border-green-400/50 transition-all duration-300 transform hover:scale-105">
               <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-lg md:text-xl shadow-lg">
@@ -285,19 +268,19 @@ export default function Home() {
               </div>
               <div className="text-center pt-6 md:pt-8">
                 <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 md:mb-6 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full flex items-center justify-center">
-               <svg className="w-6 h-6 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <rect x="4" y="2" width="16" height="20" rx="2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />     
-                  <rect x="7" y="4.5" width="10" height="2" rx="0.5" fill="currentColor" />
-                  <circle cx="8" cy="10" r="0.7" fill="currentColor" />
-                  <circle cx="12" cy="10" r="0.7" fill="currentColor" />
-                  <circle cx="16" cy="10" r="0.7" fill="currentColor" />                  
-                  <circle cx="8" cy="14" r="0.7" fill="currentColor" />
-                  <circle cx="12" cy="14" r="0.7" fill="currentColor" />
-                  <circle cx="16" cy="14" r="0.7" fill="currentColor" />
-                  <circle cx="8" cy="18" r="0.7" fill="currentColor" />
-                  <circle cx="12" cy="18" r="0.7" fill="currentColor" />
-                  <rect x="15" y="17" width="2" height="2" fill="currentColor" rx="0.5" />
-                </svg>
+                  <svg className="w-6 h-6 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <rect x="4" y="2" width="16" height="20" rx="2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    <rect x="7" y="4.5" width="10" height="2" rx="0.5" fill="currentColor" />
+                    <circle cx="8" cy="10" r="0.7" fill="currentColor" />
+                    <circle cx="12" cy="10" r="0.7" fill="currentColor" />
+                    <circle cx="16" cy="10" r="0.7" fill="currentColor" />
+                    <circle cx="8" cy="14" r="0.7" fill="currentColor" />
+                    <circle cx="12" cy="14" r="0.7" fill="currentColor" />
+                    <circle cx="16" cy="14" r="0.7" fill="currentColor" />
+                    <circle cx="8" cy="18" r="0.7" fill="currentColor" />
+                    <circle cx="12" cy="18" r="0.7" fill="currentColor" />
+                    <rect x="15" y="17" width="2" height="2" fill="currentColor" rx="0.5" />
+                  </svg>
                 </div>
                 <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-green-300">Kalkulator Interaktif</h3>
                 <p className="text-gray-400 leading-relaxed text-sm md:text-base">
@@ -306,7 +289,6 @@ export default function Home() {
               </div>
               <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
-            
             <div className="group relative bg-gradient-to-br from-cyan-900/40 to-blue-900/40 p-6 md:p-8 rounded-xl backdrop-blur-sm border border-cyan-500/20 hover:border-cyan-400/50 transition-all duration-300 transform hover:scale-105">
               <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg md:text-xl shadow-lg">
                 2
@@ -325,7 +307,6 @@ export default function Home() {
               </div>
               <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
-            
             <div className="group relative bg-gradient-to-br from-purple-900/40 to-indigo-900/40 p-6 md:p-8 rounded-xl backdrop-blur-sm border border-purple-500/20 hover:border-purple-400/50 transition-all duration-300 transform hover:scale-105">
               <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-lg md:text-xl shadow-lg">
                 3
@@ -333,7 +314,7 @@ export default function Home() {
               <div className="text-center pt-6 md:pt-8">
                 <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 md:mb-6 bg-gradient-to-r from-purple-400 to-indigo-400 rounded-full flex items-center justify-center">
                   <svg className="w-6 h-6 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                 </div>
                 <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-purple-300">Aksi Nyata Bersama</h3>
@@ -347,6 +328,27 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Gamifikasi */}
+      <section className="py-12 md:py-16 lg:py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent leading-tight">
+            Tantangan Minggu Ini
+          </h2>
+          <div className="p-[1px] bg-gradient-to-r from-green-400/30 to-cyan-400/30 rounded-2xl max-w-2xl mx-auto">
+            <div className="bg-gray-900/80 backdrop-blur-lg p-8 rounded-2xl">
+              <p className="text-cyan-400 font-semibold">{weeklyChallenge.title}</p>
+              <p className="text-xl md:text-2xl my-4">{weeklyChallenge.description}</p>
+              <button
+                onClick={() => addScore(weeklyChallenge.points)}
+                className="font-bold py-2 px-6 rounded-md text-white bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-600 hover:to-cyan-600"
+              >
+                Selesaikan (+{weeklyChallenge.points} Poin)
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Call to Action Section */}
       <section className="relative py-12 md:py-16 lg:py-20 bg-gradient-to-r from-green-900/50 via-emerald-800/50 to-cyan-900/50 backdrop-blur-sm border-t border-green-500/20">
         <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -354,8 +356,7 @@ export default function Home() {
             Saatnya Mengambil Aksi untuk Iklim
           </h2>
           <p className="text-lg md:text-xl text-gray-300 mb-8 md:mb-10 max-w-2xl mx-auto px-4">
-            Bergabunglah dengan Carbonify dan jadilah bagian dari gerakan global untuk meningkatkan kesadaran 
-            tentang jejak karbon dan mengambil aksi nyata dalam menghadapi perubahan iklim.
+            Bergabunglah dengan Carbonify dan jadilah bagian dari gerakan global untuk meningkatkan kesadaran tentang jejak karbon dan mengambil aksi nyata dalam menghadapi perubahan iklim.
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 lg:space-x-6 px-4">
             <Link
