@@ -29,7 +29,12 @@ class Action(models.Model):
     # --- FIELD BARU UNTUK INFORMASI DETAIL ---
     impact_level = models.CharField(max_length=10, choices=IMPACT_CHOICES, default='Sedang')
     effort_level = models.CharField(max_length=10, choices=EFFORT_CHOICES, default='Sedang')
-    image_url = models.URLField(max_length=255, blank=True, null=True, help_text="URL gambar yang relevan dengan aksi ini.")
+    image = models.ImageField(
+        upload_to='aksi/',  # Gambar akan disimpan di folder 'media/aksi/'
+        blank=True, 
+        null=True, 
+        help_text="Upload gambar yang relevan dengan aksi ini."
+    )
     related_links = models.TextField(blank=True, null=True, help_text="Satu URL per baris untuk sumber atau bacaan lebih lanjut.")
 
     def __str__(self):

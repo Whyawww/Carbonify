@@ -185,31 +185,40 @@ class CarbonCalculatorView(APIView):
         emisi_transportasi = transportasi_km * faktor_transportasi_obj.faktor
         emisi_konsumsi = makanan_porsi * faktor_makanan_obj.faktor
         total_emisi = emisi_listrik + emisi_transportasi + emisi_konsumsi
+
         LIMIT_MAKSIMAL = 250
         BENCHMARK_LISTRIK = 100
         BENCHMARK_TRANSPORTASI = 75
         BENCHMARK_KONSUMSI = 75
+
         is_over_limit = total_emisi > LIMIT_MAKSIMAL
         excess_details = []
+        
+        # ✅ PERUBAHAN DIMULAI DI SINI: Inisialisasi list untuk kategori
+        exceeded_categories = [] 
 
         if emisi_listrik > BENCHMARK_LISTRIK:
+            exceeded_categories.append("Listrik") # Tambahkan kategori ke list
             excess_details.append({
                 "category": "Listrik", "emoji": "💡",
                 "message": f"Penggunaan listrik Anda menghasilkan {emisi_listrik:.1f} kg CO₂e, melebihi batas wajar ({BENCHMARK_LISTRIK} kg). Coba kurangi dengan mematikan alat yang tidak terpakai."
             })
 
         if emisi_transportasi > BENCHMARK_TRANSPORTASI:
+            exceeded_categories.append("Transportasi") # Tambahkan kategori ke list
             excess_details.append({
                 "category": "Transportasi", "emoji": "🚗",
                 "message": f"Jejak transportasi Anda sebesar {emisi_transportasi:.1f} kg CO₂e, di atas batas wajar ({BENCHMARK_TRANSPORTASI} kg). Pertimbangkan menggunakan transportasi publik atau bersepeda." 
             })
 
         if emisi_konsumsi > BENCHMARK_KONSUMSI:
+            exceeded_categories.append("Konsumsi") # Tambahkan kategori ke list
             excess_details.append ({
                 "category": "Konsumsi", "emoji": "🍔",
                 "message": f"Emisi dari konsumsi makanan Anda adalah {emisi_konsumsi:.1f} kg CO₂e, melebihi batas wajar ({BENCHMARK_KONSUMSI} kg). Mengurangi konsumsi daging adalah langkah efektif."
             })
         
+        # ✅ PERUBAHAN PADA HASIL RESPON
         hasil = {
             "totalEmissions": total_emisi,
             "breakdown": {
@@ -221,6 +230,8 @@ class CarbonCalculatorView(APIView):
                 "limit" : LIMIT_MAKSIMAL,
                 "is_over_limit": is_over_limit,
                 "excess_details": excess_details,
+                "exceeded_categories": exceeded_categories, # Pastikan ini ada di dalam respons
             }
         }
+        
         return Response(hasil, status=status.HTTP_200_OK)

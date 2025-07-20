@@ -1,15 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation'; // <-- 1. Impor useRouter
+import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { FaBars, FaTimes, FaCoins } from 'react-icons/fa';
 import Image from 'next/image';
 import { useGamification } from '@/context/GamificationContext';
+import { useNotification } from '@/context/NotificationContext';
 
 const Navbar = () => {
   const pathname = usePathname();
-  const router = useRouter(); // <-- 2. Inisialisasi useRouter
+  const router = useRouter();
+  const { showNotification } = useNotification();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { score } = useGamification();
@@ -20,14 +22,17 @@ const Navbar = () => {
     setIsLoggedIn(!!token);
   }, [pathname]);
 
-  // --- 3. Tambahkan fungsi handleLogout ---
   const handleLogout = () => {
-    localStorage.removeItem('accessToken'); // Hapus sesi login
-    setIsLoggedIn(false); // Perbarui state
-    router.push('/'); // Arahkan ke beranda
-    router.refresh(); // Refresh state aplikasi
+    if (window.confirm("Apakah Anda yakin ingin keluar?")) {
+      localStorage.removeItem('accessToken');
+      setIsLoggedIn(false);
+      
+      showNotification('Anda berhasil keluar.', 'success'); 
+
+      router.push('/');
+      router.refresh();
+    }
   };
-  // -----------------------------------------
 
   useEffect(() => {
     const handleScroll = () => {
@@ -87,10 +92,8 @@ const Navbar = () => {
           })}
         </div>
         
-        {/* --- 4. Modifikasi bagian login/logout untuk Desktop --- */}
         <div className="hidden md:flex items-center space-x-4">
             {isLoggedIn ? (
-                // Jika sudah login, tampilkan skor DAN tombol logout
                 <>
                     <div className="flex items-center space-x-2 bg-gray-800/50 px-3 py-1 rounded-full">
                         <FaCoins className="text-yellow-400" />
@@ -104,7 +107,6 @@ const Navbar = () => {
                     </button>
                 </>
             ) : (
-                // Jika belum login, tampilkan tombol Login
                 <Link
                   href="/login"
                   className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-colors"
@@ -113,7 +115,6 @@ const Navbar = () => {
                 </Link>
             )}
         </div>
-        {/* ---------------------------------------------------- */}
 
         {/* Hamburger Icon */}
         <div className="md:hidden z-50 relative">
@@ -121,6 +122,7 @@ const Navbar = () => {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="transition-all duration-300"
           >
+            {/* ✅ KESALAHAN DI SINI SUDAH DIPERBAIKI */}
             {isMenuOpen ? <FaTimes size={26} /> : <FaBars size={26} />}
           </button>
 
@@ -137,7 +139,6 @@ const Navbar = () => {
                 </Link>
               ))}
               
-              {/* --- 5. Modifikasi bagian login/logout untuk Mobile --- */}
               <div className="pt-4 mt-2 border-t border-gray-600 space-y-4">
                   {isLoggedIn ? (
                       <>
@@ -161,7 +162,6 @@ const Navbar = () => {
                       </Link>
                   )}
               </div>
-              {/* --------------------------------------------------- */}
             </div>
           )}
         </div>
