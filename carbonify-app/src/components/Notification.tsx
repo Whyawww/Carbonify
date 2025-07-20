@@ -15,7 +15,7 @@ const Notification = () => {
   const icon = isSuccess ? <FaCheckCircle /> : <FaTimesCircle />;
 
   return (
-    <div 
+    <div
       className={`fixed bottom-5 right-5 z-50 flex items-center gap-3 p-4 rounded-lg text-white font-semibold shadow-lg transition-opacity duration-300 ${bgColor} ${isVisible ? 'opacity-100' : 'opacity-0'}`}
     >
       {icon}

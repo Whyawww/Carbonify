@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import { Sora } from "next/font/google";
-import ClientProviders from '@/context/ClientProviders'; 
+import { Sora } from 'next/font/google';
+import ClientProviders from '@/context/ClientProviders';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CursorLight from '@/components/CursorLight';
@@ -9,7 +9,7 @@ import Notification from '@/components/Notification';
 import 'leaflet/dist/leaflet.css';
 import './globals.css';
 
-const inter = Sora({ subsets: ["latin"] });
+const inter = Sora({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Carbonify',
@@ -23,7 +23,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-gray-900 text-white overflow-x-hidden`}>
+      <body
+        className={`${inter.className} bg-gray-900 text-white overflow-x-hidden`}
+      >
         <ClientProviders>
           <FallingLeaves />
           <CursorLight />

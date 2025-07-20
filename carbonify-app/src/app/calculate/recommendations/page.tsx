@@ -16,7 +16,7 @@ function RecommendationsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const categoriesParam = searchParams.get('categories');
-  
+
   const [recommendedActions, setRecommendedActions] = useState<Action[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -26,16 +26,16 @@ function RecommendationsContent() {
       try {
         const response = await fetch('http://127.0.0.1:8000/api/v1/actions/');
         const allActions: Action[] = await response.json();
-        
+
         const categoriesToHighlight = categories.toLowerCase().split(',');
-        
-        const filteredActions = allActions.filter(action => 
-          categoriesToHighlight.includes(action.category.toLowerCase())
+
+        const filteredActions = allActions.filter((action) =>
+          categoriesToHighlight.includes(action.category.toLowerCase()),
         );
-        
+
         setRecommendedActions(filteredActions);
       } catch (error) {
-        console.error("Gagal mengambil data aksi:", error);
+        console.error('Gagal mengambil data aksi:', error);
       } finally {
         setLoading(false);
       }
@@ -48,11 +48,10 @@ function RecommendationsContent() {
     }
   }, [categoriesParam, router]);
 
-  
   const ActionCard = ({ action }: { action: Action }) => (
-    <Link 
-      href={`/actions/${action.id}`} 
-      key={action.id} 
+    <Link
+      href={`/actions/${action.id}`}
+      key={action.id}
       className="block p-[1px] rounded-2xl transition-all duration-300 hover:scale-105 bg-gradient-to-r from-green-400/30 to-cyan-400/30"
     >
       <div className="bg-gray-900/80 backdrop-blur-lg p-6 h-full rounded-2xl shadow-lg">
@@ -78,7 +77,8 @@ function RecommendationsContent() {
           Rekomendasi Aksi Untukmu
         </h1>
         <p className="text-center text-gray-400 mb-12 text-lg">
-          Berikut adalah beberapa langkah yang bisa kamu ambil untuk mengurangi jejak karbon berdasarkan hasil kalkulasimu.
+          Berikut adalah beberapa langkah yang bisa kamu ambil untuk mengurangi
+          jejak karbon berdasarkan hasil kalkulasimu.
         </p>
 
         {recommendedActions.length > 0 ? (
@@ -92,14 +92,14 @@ function RecommendationsContent() {
             Tidak ada rekomendasi aksi yang ditemukan.
           </p>
         )}
-         <div className="text-center mt-16">
-            <Link 
-             href="/actions"
-             className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-8 rounded-full transition-colors text-lg"
-           >
-             Lihat Semua Aksi Lainnya
-           </Link>
-       </div>
+        <div className="text-center mt-16">
+          <Link
+            href="/actions"
+            className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-8 rounded-full transition-colors text-lg"
+          >
+            Lihat Semua Aksi Lainnya
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -107,8 +107,14 @@ function RecommendationsContent() {
 
 export default function RecommendationsPage() {
   return (
-    <Suspense fallback={<div className="flex justify-center items-center h-screen">Memuat halaman...</div>}>
+    <Suspense
+      fallback={
+        <div className="flex justify-center items-center h-screen">
+          Memuat halaman...
+        </div>
+      }
+    >
       <RecommendationsContent />
     </Suspense>
-  )
+  );
 }

@@ -6,7 +6,8 @@ export default function LoginPage() {
     <div className="min-h-screen flex flex-col items-center justify-center space-y-6 text-center">
       <h1 className="text-4xl font-bold">Login ke Carbonify</h1>
       <p className="text-gray-400 max-w-sm">
-        Gunakan akun Google Anda untuk melanjutkan dan mulai melacak progres aksi iklim Anda.
+        Gunakan akun Google Anda untuk melanjutkan dan mulai melacak progres
+        aksi iklim Anda.
       </p>
       <div className="pt-4">
         <GoogleLoginButton />

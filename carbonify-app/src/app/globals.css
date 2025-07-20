@@ -13,10 +13,9 @@ body {
   );
   background-attachment: fixed; /* Membuat background tidak ikut scroll */
   color: white; /* Mengubah warna teks default menjadi putih */
-
 }
 
- @layer utilities {
+@layer utilities {
   .animate-dropdown {
     animation: dropdown-fade 0.2s ease-out forwards;
   }

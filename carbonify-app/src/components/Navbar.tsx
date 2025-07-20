@@ -23,11 +23,11 @@ const Navbar = () => {
   }, [pathname]);
 
   const handleLogout = () => {
-    if (window.confirm("Apakah Anda yakin ingin keluar?")) {
+    if (window.confirm('Apakah Anda yakin ingin keluar?')) {
       localStorage.removeItem('accessToken');
       setIsLoggedIn(false);
-      
-      showNotification('Anda berhasil keluar.', 'success'); 
+
+      showNotification('Anda berhasil keluar.', 'success');
 
       router.push('/');
       router.refresh();
@@ -60,9 +60,11 @@ const Navbar = () => {
         className={`
           w-full max-w-6xl mx-auto text-white flex justify-between items-center fixed top-4 left-0 right-0 z-50
           transition-all duration-300
-          ${isScrolled
-            ? 'rounded-full py-3 px-6 bg-transparent border-2 border-green-500 backdrop-filter backdrop-blur-lg'
-            : 'rounded-none py-5 px-8 bg-transparent'}
+          ${
+            isScrolled
+              ? 'rounded-full py-3 px-6 bg-transparent border-2 border-green-500 backdrop-filter backdrop-blur-lg'
+              : 'rounded-none py-5 px-8 bg-transparent'
+          }
         `}
       >
         <Link href="/">
@@ -91,29 +93,29 @@ const Navbar = () => {
             );
           })}
         </div>
-        
+
         <div className="hidden md:flex items-center space-x-4">
-            {isLoggedIn ? (
-                <>
-                    <div className="flex items-center space-x-2 bg-gray-800/50 px-3 py-1 rounded-full">
-                        <FaCoins className="text-yellow-400" />
-                        <span className="font-bold text-white">{score}</span>
-                    </div>
-                    <button 
-                        onClick={handleLogout}
-                        className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm"
-                    >
-                        Keluar
-                    </button>
-                </>
-            ) : (
-                <Link
-                  href="/login"
-                  className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-colors"
-                >
-                  Masuk
-                </Link>
-            )}
+          {isLoggedIn ? (
+            <>
+              <div className="flex items-center space-x-2 bg-gray-800/50 px-3 py-1 rounded-full">
+                <FaCoins className="text-yellow-400" />
+                <span className="font-bold text-white">{score}</span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm"
+              >
+                Keluar
+              </button>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-colors"
+            >
+              Masuk
+            </Link>
+          )}
         </div>
 
         {/* Hamburger Icon */}
@@ -138,29 +140,29 @@ const Navbar = () => {
                   {link.label}
                 </Link>
               ))}
-              
+
               <div className="pt-4 mt-2 border-t border-gray-600 space-y-4">
-                  {isLoggedIn ? (
-                      <>
-                          <div className="flex items-center space-x-2 text-base font-medium">
-                              <FaCoins className="text-yellow-400" />
-                              <span className="text-white">{score} Poin</span>
-                          </div>
-                          <button 
-                              onClick={handleLogout}
-                              className="block w-full bg-red-500 hover:bg-red-600 text-white text-center font-bold py-2 rounded-lg transition"
-                          >
-                              Keluar
-                          </button>
-                      </>
-                  ) : (
-                      <Link
-                        href="/login"
-                        className="block w-full bg-green-500 hover:bg-green-600 text-white text-center font-bold py-2 rounded-lg transition"
-                      >
-                        Masuk
-                      </Link>
-                  )}
+                {isLoggedIn ? (
+                  <>
+                    <div className="flex items-center space-x-2 text-base font-medium">
+                      <FaCoins className="text-yellow-400" />
+                      <span className="text-white">{score} Poin</span>
+                    </div>
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full bg-red-500 hover:bg-red-600 text-white text-center font-bold py-2 rounded-lg transition"
+                    >
+                      Keluar
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    href="/login"
+                    className="block w-full bg-green-500 hover:bg-green-600 text-white text-center font-bold py-2 rounded-lg transition"
+                  >
+                    Masuk
+                  </Link>
+                )}
               </div>
             </div>
           )}

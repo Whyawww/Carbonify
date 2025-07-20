@@ -7,13 +7,15 @@ interface GamificationContextType {
   addScore: (points: number) => void;
 }
 
-const GamificationContext = createContext<GamificationContextType | undefined>(undefined);
+const GamificationContext = createContext<GamificationContextType | undefined>(
+  undefined,
+);
 
 export const GamificationProvider = ({ children }: { children: ReactNode }) => {
   const [score, setScore] = useState(0);
 
   const addScore = (points: number) => {
-    setScore(prevScore => prevScore + points);
+    setScore((prevScore) => prevScore + points);
   };
 
   return (
@@ -26,7 +28,9 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
 export const useGamification = () => {
   const context = useContext(GamificationContext);
   if (context === undefined) {
-    throw new Error('useGamification must be used within a GamificationProvider');
+    throw new Error(
+      'useGamification must be used within a GamificationProvider',
+    );
   }
   return context;
 };
