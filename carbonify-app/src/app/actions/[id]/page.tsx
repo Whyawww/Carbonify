@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import Link from 'next/link';
 
 interface ActionDetail {
@@ -34,15 +34,16 @@ const InfoBadge = ({
 export default function ActionDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  // 3. Gunakan hook 'use' untuk mendapatkan 'id'
+  const { id } = use(params);
+
   const [action, setAction] = useState<ActionDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const { id } = params;
-
     if (!id) {
       setLoading(false);
       setError('ID Aksi tidak ditemukan di URL.');
@@ -76,7 +77,7 @@ export default function ActionDetailPage({
     }
 
     fetchActionDetail();
-  }, [params]);
+  }, [id]);
 
   if (loading) {
     return (
