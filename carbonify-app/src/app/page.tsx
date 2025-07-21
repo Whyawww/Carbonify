@@ -331,16 +331,26 @@ export default function Home() {
               <div className="text-center pt-6 md:pt-8">
                 <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 md:mb-6 bg-gradient-to-r from-purple-400 to-indigo-400 rounded-full flex items-center justify-center">
                   <svg
-                    className="w-6 h-6 md:w-8 md:h-8 text-white"
-                    fill="none"
-                    stroke="currentColor"
+                    width="30"
+                    height="30"
                     viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
+                    <circle cx="12" cy="7" r="3" fill="#ffffffff" />
                     <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                      d="M12 11c-3.5 0-6.5 2-6.5 5v3h13v-3c0-3-3-5-6.5-5z"
+                      fill="#ffffffff"
+                    />
+                    <circle cx="6" cy="8" r="2.5" fill="#ffffffff" />
+                    <path
+                      d="M6 11.5c-2.5 0-4.5 1.5-4.5 3.5v2.5h4v-1.5c0-1.5 0.5-3 2-4h-1.5z"
+                      fill="#ffffffff"
+                    />
+                    <circle cx="18" cy="8" r="2.5" fill="#ffffffff" />
+                    <path
+                      d="M18 11.5c2.5 0 4.5 1.5 4.5 3.5v2.5h-4v-1.5c0-1.5-0.5-3-2-4h1.5z"
+                      fill="#ffffffff"
                     />
                   </svg>
                 </div>
