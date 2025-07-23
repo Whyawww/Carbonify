@@ -55,7 +55,7 @@ export default function LeaderboardPage() {
 
         {/* Kartu Informasi Peringkat */}
         <div className="relative mb-10 bg-gray-900/50 border-2 border-green-500/30 rounded-2xl p-6 pt-8 md:pt-6 pl-8 md:pl-32">
-          <div className="absolute -top-12 left-0 md:-left-8 w-32 h-32 md:w-60 md:h-60">
+          <div className="absolute -top-12 left-0 md:-left-6 w-32 h-32 md:w-60 md:h-60">
             <Image
               src="/Piala.png"
               alt="Piala Leaderboard"
@@ -65,7 +65,7 @@ export default function LeaderboardPage() {
             />
           </div>
 
-          <div className="relative z-10">
+          <div className="relative z-10 left-10">
             <h2 className="text-xl font-bold">
               <span className="text-green-400">Carbonify</span>{' '}
               <span className="text-white">Winline</span>
