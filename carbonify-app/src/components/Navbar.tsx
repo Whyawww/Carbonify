@@ -14,21 +14,29 @@ const Navbar = () => {
   const { showNotification } = useNotification();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { score } = useGamification();
+  
+  // 1. Ambil 'score' DAN 'fetchUserData' dari context
+  const { score, fetchUserData } = useGamification();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  // 2. Perbarui useEffect ini
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
-    setIsLoggedIn(!!token);
-  }, [pathname]);
+    if (token) {
+      setIsLoggedIn(true);
+      // Panggil fetchUserData saat token ditemukan
+      fetchUserData(token); 
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, [pathname, fetchUserData]); // Tambahkan fetchUserData ke dependency array
 
   const handleLogout = () => {
     if (window.confirm('Apakah Anda yakin ingin keluar?')) {
       localStorage.removeItem('accessToken');
       setIsLoggedIn(false);
-
       showNotification('Anda berhasil keluar.', 'success');
-
       router.push('/');
       router.refresh();
     }
@@ -124,7 +132,6 @@ const Navbar = () => {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="transition-all duration-300"
           >
-            {/* ✅ KESALAHAN DI SINI SUDAH DIPERBAIKI */}
             {isMenuOpen ? <FaTimes size={26} /> : <FaBars size={26} />}
           </button>
 

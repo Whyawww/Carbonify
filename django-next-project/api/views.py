@@ -2,7 +2,7 @@
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, viewsets, generics
+from rest_framework import status, viewsets, generics, serializers
 from rest_framework.authtoken.models import Token
 from django_filters.rest_framework import FilterSet, CharFilter
 from django.contrib.auth.models import User
@@ -21,7 +21,7 @@ from .models import (
 from .serializers import (
     ActionSerializer, EcoPointSerializer,
     FaktorEmisiListrikSerializer, FaktorEmisiTransportasiSerializer, FaktorEmisiMakananSerializer,
-    ActionDetailSerializer, LeaderboardSerializer
+    ActionDetailSerializer, LeaderboardSerializer, UserProfileSerializer
 )
 
 # +++ KODE BARU UNTUK LOGIN GOOGLE +++
@@ -254,19 +254,30 @@ class CompleteActionView(APIView):
 
     def post(self, request, *args, **kwargs):
         points_to_add = request.data.get('points')
-        if points_to_add is None:
-            return Response({'error': 'Points not provided'}, status=status.HTTP_400_BAD_REQUEST)
+        challenge_id = request.data.get('challenge_id')
+        if not points_to_add or not challenge_id:
+            return Response(
+                {'error': 'Points dan challenge_id harus disertakan.'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
         
         try:
             profile, created = UserProfile.objects.get_or_create(user=request.user)
+
+            if challenge_id in profile.completed_challenges:
+                return Response(
+                    {'error': 'Tantangan ini sudah pernah diselesaikan.'}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
             profile.score += int(points_to_add)
+            profile.completed_challenges.append(challenge_id)
             
             new_badges = check_and_award_badges(profile)
-            
             profile.save()
 
             return Response({
-                'success': 'Score updated', 
+                'success': 'Skor berhasil diperbarui', 
                 'new_score': profile.score,
                 'new_badges_awarded': new_badges
             }, status=status.HTTP_200_OK)
@@ -280,3 +291,18 @@ class LeaderboardView(generics.ListAPIView):
     
     def get_queryset(self):
         return UserProfile.objects.order_by('-score')[:10]
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['score', 'badges', 'completed_challenges']
+
+# Tambahkan view baru di api/views.py
+class UserProfileView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserProfileSerializer
+
+    def get_object(self):
+        # Mengembalikan profil dari user yang sedang login
+        profile, created = UserProfile.objects.get_or_create(user=self.request.user)
+        return profile

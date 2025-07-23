@@ -11,7 +11,8 @@ from .views import (
     FaktorEmisiTransportasiViewSet,
     FaktorEmisiMakananViewSet,
     CompleteActionView, 
-    LeaderboardView 
+    LeaderboardView,
+    UserProfileView 
 )
 
 v1_router = DefaultRouter()
@@ -26,7 +27,7 @@ urlpatterns = [
     # +++ URL BARU UNTUK LOGIN GOOGLE +++
     # URL ini akan menjadi: /api/v1/auth/google/
     path('auth/google/', GoogleLoginView.as_view(), name='google_login'),
-
+    path('profile/', UserProfileView.as_view(), name='user-profile'),
     path('calculate/', CarbonCalculatorView.as_view(), name='calculate_carbon'),
 
     path('complete-action/', CompleteActionView.as_view(), name='complete-action'),

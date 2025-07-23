@@ -56,10 +56,13 @@ class FaktorEmisiMakananSerializer(serializers.ModelSerializer):
         model = FaktorEmisiMakanan
         fields = ['id', 'jenis_makanan']
 
-class LeaderboardSerializer(serializers.ModelSerializer):
-    # Ambil username dari relasi User
-    username = serializers.CharField(source='user.username')
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['score', 'badges', 'completed_challenges']
 
+class LeaderboardSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username')
     class Meta:
         model = UserProfile
         fields = ['username', 'score']
