@@ -10,6 +10,7 @@ class Action(models.Model):
         ('Listrik', 'Listrik'),
         ('Transportasi', 'Transportasi'),
         ('Konsumsi', 'Konsumsi'),
+        ('Bahan Bakar', 'Bahan Bakar'),
         ('Umum', 'Umum'),
     ]
     IMPACT_CHOICES = [
@@ -110,6 +111,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     score = models.IntegerField(default=0)
     badges = models.JSONField(default=list)
+    completed_challenges = models.JSONField(default=list) 
 
     def __str__(self):
         return self.user.username
@@ -129,3 +131,14 @@ def save_user_profile(sender, instance, **kwargs):
     # Cek apakah profil sudah ada sebelum mencoba menyimpannya
     if hasattr(instance, 'profile'):
         instance.profile.save()
+
+class FaktorEmisiBahanBakar(models.Model):
+    jenis_bahan_bakar = models.CharField(max_length=100, unique=100)
+    faktor = models.FloatField(help_text='Faktor emisi dalam kg CO2e per liter')
+
+    def __str__(self):
+        return self.jenis_bahan_bakar
+    
+    class Meta:
+        verbose_name = "Faktor Emisi Bahan Bakar"
+        verbose_name_plural = "Faktor Emisi Bahan Bakar"

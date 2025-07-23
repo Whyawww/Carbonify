@@ -66,7 +66,10 @@ export default function LeaderboardPage() {
           </div>
 
           <div className="relative z-10">
-            <h2 className="text-xl font-bold text-white">Carbonify Winline</h2>
+            <h2 className="text-xl font-bold">
+              <span className="text-green-400">Carbonify</span>{' '}
+              <span className="text-white">Winline</span>
+            </h2>
             <p className="text-gray-400 mt-1">
               Kumpulkan poin dari aksi nyata dan tingkatkan kesadaran tentang
               jejak karbon untuk masuk ke jajaran teratas leaderboard ini.

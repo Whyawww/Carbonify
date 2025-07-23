@@ -4,19 +4,24 @@ import { useState, useEffect } from 'react';
 import { TypeAnimation } from 'react-type-animation';
 import Link from 'next/link';
 
+// Tipe data untuk pilihan dari API
 interface Choice {
   id: number;
   provinsi?: string;
   jenis_kendaraan?: string;
   jenis_makanan?: string;
+  jenis_bahan_bakar?: string; // <-- DIPERBAIKI
 }
 
+// Tipe data untuk rincian emisi
 interface Breakdown {
   listrik: number;
   transportasi: number;
   konsumsi: number;
+  bahan_bakar: number; // <-- DITAMBAHKAN
 }
 
+// Tipe data untuk hasil analisis dari API
 interface AnalysisResult {
   exceeded_categories: string[];
   limit: number;
@@ -29,23 +34,29 @@ interface AnalysisResult {
 }
 
 export default function CalculatorPage() {
+  // State untuk nilai input, termasuk bahan bakar
   const [values, setValues] = useState({
     listrik_kwh: '',
     transportasi_km: '',
     makanan_porsi: '',
+    bahan_bakar_liter: '', // <-- DITAMBAHKAN
     listrik_id: '',
     transportasi_id: '',
     makanan_id: '',
+    bahan_bakar_id: '', // <-- DITAMBAHKAN
   });
 
+  // State untuk pilihan dari API, termasuk bahan bakar
   const [choices, setChoices] = useState<{
     listrik: Choice[];
     transportasi: Choice[];
     makanan: Choice[];
+    bahan_bakar: Choice[]; // <-- DITAMBAHKAN
   }>({
     listrik: [],
     transportasi: [],
     makanan: [],
+    bahan_bakar: [], // <-- DITAMBAHKAN
   });
 
   const [totalEmissions, setTotalEmissions] = useState<number | null>(null);
@@ -57,18 +68,21 @@ export default function CalculatorPage() {
   useEffect(() => {
     const fetchChoices = async () => {
       try {
-        const [listrikRes, transRes, makananRes] = await Promise.all([
+        // Fetch semua pilihan termasuk bahan bakar
+        const [listrikRes, transRes, makananRes, bahanbakarRes] = await Promise.all([
           fetch('http://127.0.0.1:8000/api/v1/choices/listrik/'),
           fetch('http://127.0.0.1:8000/api/v1/choices/transportasi/'),
           fetch('http://127.0.0.1:8000/api/v1/choices/makanan/'),
+          fetch('http://127.0.0.1:8000/api/v1/choices/bahan-bakar/'), // <-- DITAMBAHKAN
         ]);
-        if (!listrikRes.ok || !transRes.ok || !makananRes.ok) {
+        if (!listrikRes.ok || !transRes.ok || !makananRes.ok || !bahanbakarRes.ok) { // 
           throw new Error('Gagal memuat data pilihan.');
         }
         const listrik = await listrikRes.json();
         const transportasi = await transRes.json();
         const makanan = await makananRes.json();
-        setChoices({ listrik, transportasi, makanan });
+        const bahan_bakar = await bahanbakarRes.json(); // <-- DITAMBAHKAN
+        setChoices({ listrik, transportasi, makanan, bahan_bakar }); // <-- DITAMBAHKAN
       } catch (err) {
         if (err instanceof Error) {
           setError(
@@ -120,13 +134,16 @@ export default function CalculatorPage() {
     setBreakdown(null);
     setAnalysis(null);
     setError(null);
+    // Reset semua nilai termasuk bahan bakar
     setValues({
       listrik_kwh: '',
       transportasi_km: '',
       makanan_porsi: '',
+      bahan_bakar_liter: '', // <-- DITAMBAHKAN
       listrik_id: '',
       transportasi_id: '',
       makanan_id: '',
+      bahan_bakar_id: '', // <-- DITAMBAHKAN
     });
   };
 
@@ -218,6 +235,13 @@ export default function CalculatorPage() {
                   <span>🍔 Konsumsi</span>
                   <strong>{breakdown.konsumsi.toFixed(2)} kg CO₂e</strong>
                 </p>
+                {/* Tampilkan breakdown bahan bakar jika ada */}
+                {breakdown.bahan_bakar > 0 && (
+                  <p className={`flex justify-between items-center ${categoriesOverLimit.includes('Bahan Bakar') ? 'text-yellow-400 font-semibold' : ''}`}>
+                    <span>🔥 Bahan Bakar</span>
+                    <strong>{breakdown.bahan_bakar.toFixed(2)} kg CO₂e</strong>
+                  </p>
+                )}
               </div>
             </div>
 
@@ -268,96 +292,59 @@ export default function CalculatorPage() {
               onSubmit={handleSubmit}
               className="bg-gray-900/80 backdrop-blur-lg p-8 rounded-2xl space-y-6"
             >
+              {/* Input Listrik */}
               <div>
                 <label className="block text-lg font-medium mb-2">
                   Listrik
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <select
-                    name="listrik_id"
-                    value={values.listrik_id}
-                    onChange={handleChange}
-                    required
-                    className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500"
-                  >
+                  <select name="listrik_id" value={values.listrik_id} onChange={handleChange} required className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500">
                     <option value="">Pilih Provinsi/Jaringan</option>
-                    {choices.listrik.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.provinsi}
-                      </option>
-                    ))}
+                    {choices.listrik.map((c) => (<option key={c.id} value={c.id}>{c.provinsi}</option>))}
                   </select>
-                  <input
-                    type="number"
-                    name="listrik_kwh"
-                    value={values.listrik_kwh}
-                    placeholder="Konsumsi (kWh)"
-                    onChange={handleChange}
-                    required
-                    className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500"
-                  />
+                  <input type="number" name="listrik_kwh" value={values.listrik_kwh} placeholder="Konsumsi (kWh)" onChange={handleChange} required className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500"/>
                 </div>
               </div>
+              {/* Input Transportasi */}
               <div>
                 <label className="block text-lg font-medium mb-2">
                   Transportasi
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <select
-                    name="transportasi_id"
-                    value={values.transportasi_id}
-                    onChange={handleChange}
-                    required
-                    className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500"
-                  >
+                  <select name="transportasi_id" value={values.transportasi_id} onChange={handleChange} required className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500">
                     <option value="">Pilih Jenis Kendaraan</option>
-                    {choices.transportasi.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.jenis_kendaraan}
-                      </option>
-                    ))}
+                    {choices.transportasi.map((c) => (<option key={c.id} value={c.id}>{c.jenis_kendaraan}</option>))}
                   </select>
-                  <input
-                    type="number"
-                    name="transportasi_km"
-                    value={values.transportasi_km}
-                    placeholder="Jarak Tempuh (km)"
-                    onChange={handleChange}
-                    required
-                    className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500"
-                  />
+                  <input type="number" name="transportasi_km" value={values.transportasi_km} placeholder="Jarak Tempuh (km)" onChange={handleChange} required className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500"/>
                 </div>
               </div>
+              {/* Input Makanan */}
               <div>
                 <label className="block text-lg font-medium mb-2">
                   Konsumsi Makanan
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <select
-                    name="makanan_id"
-                    value={values.makanan_id}
-                    onChange={handleChange}
-                    required
-                    className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500"
-                  >
+                  <select name="makanan_id" value={values.makanan_id} onChange={handleChange} required className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500">
                     <option value="">Pilih Jenis Makanan</option>
-                    {choices.makanan.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.jenis_makanan}
-                      </option>
-                    ))}
+                    {choices.makanan.map((c) => (<option key={c.id} value={c.id}>{c.jenis_makanan}</option>))}
                   </select>
-                  <input
-                    type="number"
-                    name="makanan_porsi"
-                    value={values.makanan_porsi}
-                    placeholder="Jumlah (kg/bulan)"
-                    onChange={handleChange}
-                    required
-                    className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500"
-                  />
+                  <input type="number" name="makanan_porsi" value={values.makanan_porsi} placeholder="Jumlah (kg/bulan)" onChange={handleChange} required className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500"/>
                 </div>
               </div>
+              {/* Input Bahan Bakar */}
+              <div>
+                <label className="block text-lg font-medium mb-2">
+                  Bahan Bakar
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <select name="bahan_bakar_id" value={values.bahan_bakar_id} onChange={handleChange} required className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500">
+                    <option value="">Pilih Jenis Bahan Bakar</option>
+                    {choices.bahan_bakar.map((c) => (<option key={c.id} value={c.id}>{c.jenis_bahan_bakar}</option>))}
+                  </select>
+                  <input type="number" name="bahan_bakar_liter" value={values.bahan_bakar_liter} placeholder="Jumlah (Liter atau Kg / bulan)" onChange={handleChange} required className="w-full bg-gray-800/50 border border-gray-700 rounded-md p-3 focus:ring-green-500 focus:border-green-500"/>
+                </div>
+              </div>
+              
               <button
                 type="submit"
                 disabled={isLoading}

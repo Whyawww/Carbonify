@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { TypeAnimation } from 'react-type-animation';
@@ -9,9 +8,8 @@ import { weeklyChallenges } from '@/lib/gamificationData';
 import { useGamification } from '@/context/GamificationContext';
 
 export default function Home() {
-  const { addScore } = useGamification();
 
-  const [completedChallenges, setCompletedChallenges] = useState<string[]>([]);
+  const { addScore, completedChallenges } = useGamification();
 
   const handleCompleteChallenge = async (
     challengeId: string,
@@ -45,8 +43,7 @@ export default function Home() {
       if (!response.ok)
         throw new Error(result.error || 'Gagal memperbarui skor.');
 
-      addScore(points);
-      setCompletedChallenges((prev) => [...prev, challengeId]);
+      addScore(points, challengeId);
       alert('Selamat! Poin berhasil ditambahkan.');
 
       if (result.new_badges_awarded && result.new_badges_awarded.length > 0) {
@@ -331,16 +328,26 @@ export default function Home() {
               <div className="text-center pt-6 md:pt-8">
                 <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 md:mb-6 bg-gradient-to-r from-purple-400 to-indigo-400 rounded-full flex items-center justify-center">
                   <svg
-                    className="w-6 h-6 md:w-8 md:h-8 text-white"
-                    fill="none"
-                    stroke="currentColor"
+                    width="30"
+                    height="30"
                     viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
+                    <circle cx="12" cy="7" r="3" fill="#ffffffff" />
                     <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                      d="M12 11c-3.5 0-6.5 2-6.5 5v3h13v-3c0-3-3-5-6.5-5z"
+                      fill="#ffffffff"
+                    />
+                    <circle cx="6" cy="8" r="2.5" fill="#ffffffff" />
+                    <path
+                      d="M6 11.5c-2.5 0-4.5 1.5-4.5 3.5v2.5h4v-1.5c0-1.5 0.5-3 2-4h-1.5z"
+                      fill="#ffffffff"
+                    />
+                    <circle cx="18" cy="8" r="2.5" fill="#ffffffff" />
+                    <path
+                      d="M18 11.5c2.5 0 4.5 1.5 4.5 3.5v2.5h-4v-1.5c0-1.5-0.5-3-2-4h1.5z"
+                      fill="#ffffffff"
                     />
                   </svg>
                 </div>
@@ -359,35 +366,43 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Gamifikasi */}
+            {/* Gamifikasi */}
       <section className="py-12 md:py-16 lg:py-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent leading-tight">
-            Tantangan yang Tersedia
-          </h2>
-          {/* Tampilkan semua tantangan menggunakan .map */}
-          <div className="space-y-6">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent leading-tight">
+              Tantangan yang Tersedia
+            </h2>
+            <p className="max-w-3xl mx-auto text-gray-400 text-base md:text-lg">
+              Selesaikan tantangan untuk mendapatkan poin dan lencana, serta buktikan kontribusimu!
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {weeklyChallenges.map((challenge) => {
+              // 'isCompleted' sekarang menggunakan data dari context
               const isCompleted = completedChallenges.includes(challenge.id);
               return (
                 <div
                   key={challenge.id}
-                  className="p-[1px] bg-gradient-to-r from-green-400/30 to-cyan-400/30 rounded-2xl max-w-2xl mx-auto"
+                  className="p-[1px] bg-gradient-to-r from-green-400/30 to-cyan-400/30 rounded-2xl h-full"
                 >
-                  <div className="bg-gray-900/80 backdrop-blur-lg p-8 rounded-2xl">
-                    <p className="text-cyan-400 font-semibold">
-                      {challenge.title}
-                    </p>
-                    <p className="text-xl md:text-2xl my-4">
-                      {challenge.description}
-                    </p>
+                  <div className="bg-gray-900/80 backdrop-blur-lg p-6 rounded-2xl h-full flex flex-col justify-between text-center">
+                    <div>
+                      <p className="text-cyan-400 font-semibold text-lg">
+                        {challenge.title}
+                      </p>
+                      <p className="text-xl my-4">
+                        {challenge.description}
+                      </p>
+                    </div>
                     <button
                       onClick={() =>
                         handleCompleteChallenge(challenge.id, challenge.points)
                       }
-                      disabled={isCompleted} // Tombol non-aktif jika sudah selesai
+                      disabled={isCompleted}
                       className={`
-                        font-bold py-2 px-6 rounded-md text-white transition-all duration-300
+                        font-bold py-2 px-6 rounded-md text-white transition-all duration-300 mt-4
                         ${
                           isCompleted
                             ? 'bg-gray-600 cursor-not-allowed'
