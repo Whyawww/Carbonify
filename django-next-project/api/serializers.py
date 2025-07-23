@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Action, EcoPoint, FaktorEmisiListrik, FaktorEmisiTransportasi, FaktorEmisiMakanan, UserProfile
+from .models import Action, EcoPoint, FaktorEmisiBahanBakar, FaktorEmisiListrik, FaktorEmisiTransportasi, FaktorEmisiMakanan, UserProfile
 
 # Serializer untuk daftar singkat Aksi
 class ActionSerializer(serializers.ModelSerializer):
@@ -66,3 +66,8 @@ class LeaderboardSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['username', 'score']
+
+class FaktorEmisiBahanBakarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FaktorEmisiBahanBakar
+        fields = ['id', 'jenis_bahan_bakar']

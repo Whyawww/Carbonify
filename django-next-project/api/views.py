@@ -15,11 +15,11 @@ from google.auth.transport import requests
 
 from math import radians, sin, cos, sqrt, atan2
 from .models import (
-    Action, EcoPoint,
+    Action, EcoPoint, FaktorEmisiBahanBakar,
     FaktorEmisiListrik, FaktorEmisiTransportasi, FaktorEmisiMakanan, UserProfile
 )
 from .serializers import (
-    ActionSerializer, EcoPointSerializer,
+    ActionSerializer, EcoPointSerializer, FaktorEmisiBahanBakarSerializer,
     FaktorEmisiListrikSerializer, FaktorEmisiTransportasiSerializer, FaktorEmisiMakananSerializer,
     ActionDetailSerializer, LeaderboardSerializer, UserProfileSerializer
 )
@@ -169,9 +169,12 @@ class CarbonCalculatorView(APIView):
             listrik_kwh = float(request.data.get('listrik_kwh', 0))
             transportasi_km = float(request.data.get('transportasi_km', 0))
             makanan_porsi = float(request.data.get('makanan_porsi', 0))
+            bahan_bakar_liter = float(request.data.get('bahan_bakar_liter', 0))
+
             listrik_id = int(request.data.get('listrik_id'))
             transportasi_id = int(request.data.get('transportasi_id'))
             makanan_id = int(request.data.get('makanan_id'))
+            bahan_bakar_id = int(request.data.get('bahan_bakar_id'))
         except (ValueError, TypeError):
             return Response({"error": "Input tidak valid atau tidak lengkap. Pastikan semua pilihan dan angka telah diisi."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -179,18 +182,22 @@ class CarbonCalculatorView(APIView):
             faktor_listrik_obj = FaktorEmisiListrik.objects.get(id=listrik_id)
             faktor_transportasi_obj = FaktorEmisiTransportasi.objects.get(id=transportasi_id)
             faktor_makanan_obj = FaktorEmisiMakanan.objects.get(id=makanan_id)
+            faktor_bahan_bakar_obj = FaktorEmisiBahanBakar.objects.get(id=bahan_bakar_id)
         except (FaktorEmisiListrik.DoesNotExist, FaktorEmisiTransportasi.DoesNotExist, FaktorEmisiMakanan.DoesNotExist):
             return Response({"error": "Faktor emisi tidak ditemukan untuk ID yang diberikan."}, status=status.HTTP_404_NOT_FOUND)
 
         emisi_listrik = listrik_kwh * faktor_listrik_obj.faktor
         emisi_transportasi = transportasi_km * faktor_transportasi_obj.faktor
         emisi_konsumsi = makanan_porsi * faktor_makanan_obj.faktor
-        total_emisi = emisi_listrik + emisi_transportasi + emisi_konsumsi
+        emisi_bahan_bakar = bahan_bakar_liter * faktor_bahan_bakar_obj.faktor
+
+        total_emisi = emisi_listrik + emisi_transportasi + emisi_konsumsi + emisi_bahan_bakar
 
         LIMIT_MAKSIMAL = 250
         BENCHMARK_LISTRIK = 100
         BENCHMARK_TRANSPORTASI = 75
         BENCHMARK_KONSUMSI = 75
+        BENCHMARK_BAHAN_BAKAR = 50 
 
         is_over_limit = total_emisi > LIMIT_MAKSIMAL
         excess_details = []
@@ -218,6 +225,13 @@ class CarbonCalculatorView(APIView):
                 "category": "Konsumsi", "emoji": "🍔",
                 "message": f"Emisi dari konsumsi makanan Anda adalah {emisi_konsumsi:.1f} kg CO₂e, melebihi batas wajar ({BENCHMARK_KONSUMSI} kg). Mengurangi konsumsi daging adalah langkah efektif."
             })
+
+        if emisi_bahan_bakar > BENCHMARK_BAHAN_BAKAR:
+            exceeded_categories.append("Bahan Bakar")
+            excess_details.append ({
+                "category": "Bahan Bakar", "emoji": "🔥",
+                "message": f"Emisi dari bahan bakar Anda adalah {emisi_bahan_bakar:.1f} kg CO₂e, melebihi batas wajar ({BENCHMARK_BAHAN_BAKAR} kg)."
+            })
         
         # ✅ PERUBAHAN PADA HASIL RESPON
         hasil = {
@@ -226,6 +240,7 @@ class CarbonCalculatorView(APIView):
                 "listrik": round(emisi_listrik, 2),
                 "transportasi": round(emisi_transportasi, 2),
                 "konsumsi": round(emisi_konsumsi, 2),
+                "bahan_bakar" : round(emisi_bahan_bakar, 2)
             }, 
             "analysis": {
                 "limit" : LIMIT_MAKSIMAL,
@@ -306,3 +321,7 @@ class UserProfileView(generics.RetrieveAPIView):
         # Mengembalikan profil dari user yang sedang login
         profile, created = UserProfile.objects.get_or_create(user=self.request.user)
         return profile
+    
+class FaktorEmisiBahanBakarViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = FaktorEmisiBahanBakar.objects.all().order_by('jenis_bahan_bakar')
+    serializer_class = FaktorEmisiBahanBakarSerializer

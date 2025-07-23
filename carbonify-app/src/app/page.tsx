@@ -8,7 +8,6 @@ import { weeklyChallenges } from '@/lib/gamificationData';
 import { useGamification } from '@/context/GamificationContext';
 
 export default function Home() {
-
   const { addScore, completedChallenges } = useGamification();
 
   const handleCompleteChallenge = async (
@@ -366,7 +365,7 @@ export default function Home() {
         </div>
       </section>
 
-            {/* Gamifikasi */}
+      {/* Gamifikasi */}
       <section className="py-12 md:py-16 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -374,7 +373,8 @@ export default function Home() {
               Tantangan yang Tersedia
             </h2>
             <p className="max-w-3xl mx-auto text-gray-400 text-base md:text-lg">
-              Selesaikan tantangan untuk mendapatkan poin dan lencana, serta buktikan kontribusimu!
+              Selesaikan tantangan untuk mendapatkan poin dan lencana, serta
+              buktikan kontribusimu!
             </p>
           </div>
 
@@ -392,9 +392,7 @@ export default function Home() {
                       <p className="text-cyan-400 font-semibold text-lg">
                         {challenge.title}
                       </p>
-                      <p className="text-xl my-4">
-                        {challenge.description}
-                      </p>
+                      <p className="text-xl my-4">{challenge.description}</p>
                     </div>
                     <button
                       onClick={() =>

@@ -14,19 +14,19 @@ const Navbar = () => {
   const { showNotification } = useNotification();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
+
   // 1. Ambil 'score' DAN 'fetchUserData' dari context
   const { score, fetchUserData } = useGamification();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
+
   // 2. Perbarui useEffect ini
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (token) {
       setIsLoggedIn(true);
       // Panggil fetchUserData saat token ditemukan
-      fetchUserData(token); 
+      fetchUserData(token);
     } else {
       setIsLoggedIn(false);
     }

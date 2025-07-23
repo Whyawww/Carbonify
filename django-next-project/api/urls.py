@@ -10,9 +10,10 @@ from .views import (
     FaktorEmisiListrikViewSet,
     FaktorEmisiTransportasiViewSet,
     FaktorEmisiMakananViewSet,
-    CompleteActionView, 
-    LeaderboardView,
-    UserProfileView 
+    FaktorEmisiBahanBakarViewSet,
+    CompleteActionView,
+    UserProfileView,
+    LeaderboardView 
 )
 
 v1_router = DefaultRouter()
@@ -21,6 +22,7 @@ v1_router.register(r'ecopoints', EcoPointViewSet, basename='ecopoint')
 v1_router.register(r'choices/listrik', FaktorEmisiListrikViewSet, basename='choices-listrik')
 v1_router.register(r'choices/transportasi', FaktorEmisiTransportasiViewSet, basename='choices-transportasi')
 v1_router.register(r'choices/makanan', FaktorEmisiMakananViewSet, basename='choices-makanan')
+v1_router.register(r'choices/bahan-bakar', FaktorEmisiBahanBakarViewSet, basename='choices-bahan-bakar')
 
 # URL yang tidak menggunakan router
 urlpatterns = [
