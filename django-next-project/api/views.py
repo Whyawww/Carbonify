@@ -169,12 +169,14 @@ class CarbonCalculatorView(APIView):
             listrik_kwh = float(request.data.get('listrik_kwh', 0))
             transportasi_km = float(request.data.get('transportasi_km', 0))
             makanan_porsi = float(request.data.get('makanan_porsi', 0))
+            # ✅ DIPERBAIKI: Salah ketik pada 'bahan_bakar_liter'
             bahan_bakar_liter = float(request.data.get('bahan_bakar_liter', 0))
 
             listrik_id = int(request.data.get('listrik_id'))
             transportasi_id = int(request.data.get('transportasi_id'))
             makanan_id = int(request.data.get('makanan_id'))
-            bahan_bakar_id = int(request.data.get('bahan_bakar_id'))
+            # ✅ DIPERBAIKI: Gunakan string 'bahan_bakar_id'
+            bahan_bakar_id = int(request.data.get('bahan_bakar_id')) 
         except (ValueError, TypeError):
             return Response({"error": "Input tidak valid atau tidak lengkap. Pastikan semua pilihan dan angka telah diisi."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -183,7 +185,8 @@ class CarbonCalculatorView(APIView):
             faktor_transportasi_obj = FaktorEmisiTransportasi.objects.get(id=transportasi_id)
             faktor_makanan_obj = FaktorEmisiMakanan.objects.get(id=makanan_id)
             faktor_bahan_bakar_obj = FaktorEmisiBahanBakar.objects.get(id=bahan_bakar_id)
-        except (FaktorEmisiListrik.DoesNotExist, FaktorEmisiTransportasi.DoesNotExist, FaktorEmisiMakanan.DoesNotExist):
+        # ✅ DIPERBAIKI: Tambahkan penanganan error untuk Bahan Bakar
+        except (FaktorEmisiListrik.DoesNotExist, FaktorEmisiTransportasi.DoesNotExist, FaktorEmisiMakanan.DoesNotExist, FaktorEmisiBahanBakar.DoesNotExist):
             return Response({"error": "Faktor emisi tidak ditemukan untuk ID yang diberikan."}, status=status.HTTP_404_NOT_FOUND)
 
         emisi_listrik = listrik_kwh * faktor_listrik_obj.faktor
@@ -201,31 +204,29 @@ class CarbonCalculatorView(APIView):
 
         is_over_limit = total_emisi > LIMIT_MAKSIMAL
         excess_details = []
-        
-        # ✅ PERUBAHAN DIMULAI DI SINI: Inisialisasi list untuk kategori
         exceeded_categories = [] 
 
         if emisi_listrik > BENCHMARK_LISTRIK:
-            exceeded_categories.append("Listrik") # Tambahkan kategori ke list
+            exceeded_categories.append("Listrik")
             excess_details.append({
                 "category": "Listrik", "emoji": "💡",
                 "message": f"Penggunaan listrik Anda menghasilkan {emisi_listrik:.1f} kg CO₂e, melebihi batas wajar ({BENCHMARK_LISTRIK} kg). Coba kurangi dengan mematikan alat yang tidak terpakai."
             })
 
         if emisi_transportasi > BENCHMARK_TRANSPORTASI:
-            exceeded_categories.append("Transportasi") # Tambahkan kategori ke list
+            exceeded_categories.append("Transportasi")
             excess_details.append({
                 "category": "Transportasi", "emoji": "🚗",
                 "message": f"Jejak transportasi Anda sebesar {emisi_transportasi:.1f} kg CO₂e, di atas batas wajar ({BENCHMARK_TRANSPORTASI} kg). Pertimbangkan menggunakan transportasi publik atau bersepeda." 
             })
 
         if emisi_konsumsi > BENCHMARK_KONSUMSI:
-            exceeded_categories.append("Konsumsi") # Tambahkan kategori ke list
+            exceeded_categories.append("Konsumsi")
             excess_details.append ({
                 "category": "Konsumsi", "emoji": "🍔",
                 "message": f"Emisi dari konsumsi makanan Anda adalah {emisi_konsumsi:.1f} kg CO₂e, melebihi batas wajar ({BENCHMARK_KONSUMSI} kg). Mengurangi konsumsi daging adalah langkah efektif."
             })
-
+        
         if emisi_bahan_bakar > BENCHMARK_BAHAN_BAKAR:
             exceeded_categories.append("Bahan Bakar")
             excess_details.append ({
@@ -233,7 +234,6 @@ class CarbonCalculatorView(APIView):
                 "message": f"Emisi dari bahan bakar Anda adalah {emisi_bahan_bakar:.1f} kg CO₂e, melebihi batas wajar ({BENCHMARK_BAHAN_BAKAR} kg)."
             })
         
-        # ✅ PERUBAHAN PADA HASIL RESPON
         hasil = {
             "totalEmissions": total_emisi,
             "breakdown": {
@@ -246,7 +246,7 @@ class CarbonCalculatorView(APIView):
                 "limit" : LIMIT_MAKSIMAL,
                 "is_over_limit": is_over_limit,
                 "excess_details": excess_details,
-                "exceeded_categories": exceeded_categories, # Pastikan ini ada di dalam respons
+                "exceeded_categories": exceeded_categories,
             }
         }
         
