@@ -10,7 +10,7 @@ interface Choice {
   provinsi?: string;
   jenis_kendaraan?: string;
   jenis_makanan?: string;
-  jenis_bahan_bakar?: string; // <-- DIPERBAIKI
+  jenis_bahan_bakar?: string;
 }
 
 // Tipe data untuk rincian emisi
@@ -18,7 +18,7 @@ interface Breakdown {
   listrik: number;
   transportasi: number;
   konsumsi: number;
-  bahan_bakar: number; // <-- DITAMBAHKAN
+  bahan_bakar: number; 
 }
 
 // Tipe data untuk hasil analisis dari API

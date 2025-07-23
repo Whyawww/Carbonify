@@ -133,7 +133,7 @@ def save_user_profile(sender, instance, **kwargs):
         instance.profile.save()
 
 class FaktorEmisiBahanBakar(models.Model):
-    jenis_bahan_bakar = models.CharField(max_length=100, unique=100)
+    jenis_bahan_bakar = models.CharField(max_length=100, unique=True)
     faktor = models.FloatField(help_text='Faktor emisi dalam kg CO2e per liter')
 
     def __str__(self):
