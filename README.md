@@ -1,6 +1,6 @@
 # 🌍 Carbonify - Jejak Karbon & Aksi Iklim
 
-**Carbonify** adalah platform web interaktif yang dirancang untuk meningkatkan kesadaran tentang jejak karbon dan mendorong aksi nyata dalam menghadapi perubahan iklim. Proyek ini dibangun sebagai bagian dari **Technology Innovative Challenge 8.0** dengan tema "Impact World through Code: Building Solutions for Sustainable Development Goals".
+**Carbonify** platform web interaktif yang dirancang untuk meningkatkan kesadaran masyarakat terhadap emisi karbon pribadi dan mendorong aksi nyata dalam menghadapi perubahan iklim. Proyek ini dikembangkan sebagai solusi inovatif berbasis teknologi untuk mendukung pencapaian **Sustainable Development Goals (SDGs)**, khususnya dalam konteks **keberlanjutan lingkungan dan transformasi digital di Indonesia**.".
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Site-green?style=for-the-badge)](https://your-live-demo-url.com) 
 
