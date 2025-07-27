@@ -18,7 +18,7 @@ interface Breakdown {
   listrik: number;
   transportasi: number;
   konsumsi: number;
-  bahan_bakar: number; 
+  bahan_bakar: number;
 }
 
 // Tipe data untuk hasil analisis dari API

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { FaBars, FaTimes, FaCoins } from 'react-icons/fa';
 import Image from 'next/image';
 import { useGamification } from '@/context/GamificationContext';
@@ -15,24 +15,21 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // 1. Ambil 'score' DAN 'fetchUserData' dari context
   const { score, fetchUserData } = useGamification();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // 2. Perbarui useEffect ini
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (token) {
       setIsLoggedIn(true);
-      // Panggil fetchUserData saat token ditemukan
       fetchUserData(token);
     } else {
       setIsLoggedIn(false);
     }
-  }, [pathname, fetchUserData]); // Tambahkan fetchUserData ke dependency array
+  }, [pathname, fetchUserData]);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     if (window.confirm('Apakah Anda yakin ingin keluar?')) {
       localStorage.removeItem('accessToken');
       setIsLoggedIn(false);
@@ -40,7 +37,7 @@ const Navbar = () => {
       router.push('/');
       router.refresh();
     }
-  };
+  }, [router, showNotification]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -148,16 +145,20 @@ const Navbar = () => {
                 </Link>
               ))}
 
-              <div className="pt-4 mt-2 border-t border-gray-600 space-y-4">
+              <div className="hidden md:flex items-center space-x-4">
                 {isLoggedIn ? (
                   <>
-                    <div className="flex items-center space-x-2 text-base font-medium">
+                    {/* UBAH DIV MENJADI LINK */}
+                    <Link
+                      href="/redeem"
+                      className="flex items-center space-x-2 bg-gray-800/50 px-3 py-1 rounded-full hover:bg-gray-700/70 transition-colors"
+                    >
                       <FaCoins className="text-yellow-400" />
-                      <span className="text-white">{score} Poin</span>
-                    </div>
+                      <span className="font-bold text-white">{score}</span>
+                    </Link>
                     <button
                       onClick={handleLogout}
-                      className="block w-full bg-red-500 hover:bg-red-600 text-white text-center font-bold py-2 rounded-lg transition"
+                      className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm"
                     >
                       Keluar
                     </button>
@@ -165,7 +166,7 @@ const Navbar = () => {
                 ) : (
                   <Link
                     href="/login"
-                    className="block w-full bg-green-500 hover:bg-green-600 text-white text-center font-bold py-2 rounded-lg transition"
+                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition-colors"
                   >
                     Masuk
                   </Link>

@@ -13,6 +13,7 @@ interface GamificationContextType {
   completedChallenges: string[];
   fetchUserData: (token: string) => Promise<void>;
   addScore: (points: number, challengeId: string) => void;
+  reduceScore: (points: number) => void;
 }
 
 const GamificationContext = createContext<GamificationContextType | undefined>(
@@ -43,9 +44,19 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
     setCompletedChallenges((prev) => [...prev, challengeId]);
   };
 
+  const reduceScore = (points: number) => {
+    setScore((prevScore) => Math.max(0, prevScore - points));
+  };
+
   return (
     <GamificationContext.Provider
-      value={{ score, completedChallenges, fetchUserData, addScore }}
+      value={{
+        score,
+        completedChallenges,
+        fetchUserData,
+        addScore,
+        reduceScore,
+      }}
     >
       {children}
     </GamificationContext.Provider>

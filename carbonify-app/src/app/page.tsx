@@ -1,15 +1,37 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { TypeAnimation } from 'react-type-animation';
 import StatCard from '@/components/StatCard';
 import { weeklyChallenges } from '@/lib/gamificationData';
 import { useGamification } from '@/context/GamificationContext';
+import { useNotification } from '@/context/NotificationContext';
+import GoogleLoginButton from '@/components/GoogleLoginButton';
 
 export default function Home() {
   const { addScore, completedChallenges } = useGamification();
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    setIsLoggedIn(!!token);
+  }, []);
+
+  const router = useRouter();
+  const { showNotification } = useNotification();
+
+  const handleLogout = () => {
+    if (window.confirm('Apakah Anda yakin ingin keluar?')) {
+      localStorage.removeItem('accessToken');
+      setIsLoggedIn(false);
+      showNotification('Anda berhasil keluar.', 'success');
+      router.push('/');
+    }
+  };
   const handleCompleteChallenge = async (
     challengeId: string,
     points: number,
@@ -58,6 +80,73 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
+      <section className="pt-12 md:pt-16 lg:pt-30">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-18">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+            {/* Kolom Kiri*/}
+            <div className="text-center lg:text-left">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">
+                Bergabunglah dengan Gerakan Kami
+              </h2>
+              <p className="text-lg text-gray-400 leading-relaxed">
+                Carbonify adalah platform web interaktif yang dirancang untuk
+                meningkatkan kesadaran masyarakat terhadap emisi karbon pribadi
+                dan mendorong aksi nyata dalam menghadapi perubahan iklim.
+                Proyek ini dikembangkan sebagai solusi inovatif berbasis
+                teknologi untuk mendukung pencapaian Sustainable Development
+                Goals (SDGs), khususnya dalam konteks keberlanjutan lingkungan
+                dan transformasi digital di Indonesia.
+              </p>
+              <p className="text-lg text-gray-400 leading-relaxed">
+                Dengan membuat akun, Anda dapat melacak progres, mendapatkan
+                poin dari setiap aksi, dan melihat peringkat Anda di papan
+                peringkat pahlawan iklim. Jadilah bagian dari perubahan positif
+                hari ini.
+              </p>
+            </div>
+
+            {/* Kolom Kanan*/}
+            <div className="h-full flex items-center justify-center p-[2px] bg-gradient-to-r from-green-400/30 to-cyan-400/30 rounded-2xl w-full max-w-xl mx-auto ">
+              <div className="h-full bg-gray-900/80 backdrop-blur-lg p-8 rounded-2xl text-center space-y-4 flex flex-col justify-center">
+                {isLoggedIn ? (
+                  // Tampilan Jika Sudah Login
+                  <>
+                    <h3 className="text-2xl font-bold text-white">
+                      Selamat Datang Kembali!
+                    </h3>
+                    <p className="text-gray-400">
+                      Anda sudah masuk. Lanjutkan perjalanan Anda untuk menjadi
+                      pahlawan iklim.
+                    </p>
+                    <div className="flex justify-center pt-2">
+                      <button
+                        onClick={handleLogout}
+                        className="font-bold py-3 px-8 rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors"
+                      >
+                        Keluar
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  // Tampilan Jika Belum Login
+                  <>
+                    <h3 className="text-2xl font-bold text-white">
+                      Mulai Perjalanan Anda
+                    </h3>
+                    <p className="text-gray-400">
+                      Login dengan akun Google untuk menyimpan progres dan
+                      mendapatkan poin.
+                    </p>
+                    <div className="flex justify-center pt-2">
+                      <GoogleLoginButton />
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
       {/* Hero Section */}
       <main className="relative flex flex-col items-center justify-center min-h-screen pt-16 md:pt-20 lg:pt-24 overflow-hidden">
         <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -416,6 +505,52 @@ export default function Home() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* Reedem */}
+      <section className="py-12 md:py-16 lg:py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Kolom Kiri: Gambar Ilustrasi */}
+            <div className="relative w-full h-64 lg:h-80">
+              <Image
+                src="/images/redeem.jpg"
+                alt="Tukarkan Poin dengan Saldo"
+                layout="fill"
+                objectFit="contain"
+                className="rounded-2xl"
+              />
+            </div>
+
+            {/* Kolom Kanan: Penjelasan & Tombol */}
+            <div className="text-center lg:text-left">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">
+                Aksi Nyata, Imbalan Nyata
+              </h2>
+              <p className="text-lg text-gray-400 leading-relaxed mb-6">
+                Setiap poin yang Anda kumpulkan adalah bukti kontribusi Anda
+                untuk bumi. Kami menghargai usaha Anda dengan imbalan yang bisa
+                Anda nikmati.
+              </p>
+              <div className="inline-block bg-gray-800/50 p-4 rounded-xl mb-8">
+                <p className="text-lg">
+                  <span className="font-bold text-cyan-400">10.000 Poin</span> ={' '}
+                  <span className="font-bold text-green-400">
+                    Rp 5.000 Saldo
+                  </span>
+                </p>
+              </div>
+              <div>
+                <Link
+                  href="/redeem"
+                  className="inline-block font-bold py-3 px-8 rounded-md text-white bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-600 hover:to-cyan-600 transition-transform transform hover:scale-105"
+                >
+                  Tukarkan Poin Sekarang
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
