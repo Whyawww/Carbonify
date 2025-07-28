@@ -3,9 +3,10 @@
 import { useEffect, useState, use } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useGamification } from '@/context/GamificationContext';
 
+// 1. Perbarui Interface sesuai model baru
 interface ActionDetail {
-  image: string | null;
   id: number;
   emoji: string;
   title: string;
@@ -14,8 +15,11 @@ interface ActionDetail {
   content: string;
   impact_level: string;
   effort_level: string;
-  image_url: string | null;
+  image: string | null;
   related_links: string | null;
+  // Tambahkan field baru & hapus 'points'
+  unit_name: string;
+  points_per_unit: number;
 }
 
 const InfoBadge = ({
@@ -44,6 +48,9 @@ export default function ActionDetailPage({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Cukup ambil isLoggedIn untuk menentukan apakah tombol harus ditampilkan
+  const { isLoggedIn } = useGamification();
+
   useEffect(() => {
     if (!id) {
       setLoading(false);
@@ -54,22 +61,15 @@ export default function ActionDetailPage({
     async function fetchActionDetail() {
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/api/v1/actions/${id}/`,
+          `http://127.0.0.1:8000/api/v1/actions/${id}/`
         );
-
         if (!response.ok) {
-          if (response.status === 404) {
-            throw new Error('Aksi dengan ID ini tidak ditemukan di database.');
-          }
-          throw new Error('Gagal mengambil data dari server.');
+          throw new Error('Gagal mengambil data aksi.');
         }
-
         const data = await response.json();
         setAction(data as ActionDetail);
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        }
+      } catch (err: any) {
+        setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -77,6 +77,9 @@ export default function ActionDetailPage({
 
     fetchActionDetail();
   }, [id]);
+
+  // 2. Hapus fungsi handleCompleteAction
+  // Fungsi ini tidak lagi diperlukan di halaman ini.
 
   if (loading) {
     return (
@@ -86,20 +89,10 @@ export default function ActionDetailPage({
     );
   }
 
-  if (error) {
+  if (error || !action) {
     return (
       <div className="min-h-screen flex justify-center items-center">
-        <p className="text-xl text-red-500">{error}</p>
-      </div>
-    );
-  }
-
-  if (!action) {
-    return (
-      <div className="min-h-screen flex justify-center items-center">
-        <p className="text-xl text-gray-400">
-          Tidak ada data aksi untuk ditampilkan.
-        </p>
+        <p className="text-xl text-red-500">{error || 'Tidak ada data aksi.'}</p>
       </div>
     );
   }
@@ -108,14 +101,14 @@ export default function ActionDetailPage({
     action.impact_level === 'Tinggi'
       ? 'text-red-400'
       : action.impact_level === 'Sedang'
-        ? 'text-yellow-400'
-        : 'text-green-400';
+      ? 'text-yellow-400'
+      : 'text-green-400';
   const effortColor =
     action.effort_level === 'Sulit'
       ? 'text-red-400'
       : action.effort_level === 'Sedang'
-        ? 'text-yellow-400'
-        : 'text-green-400';
+      ? 'text-yellow-400'
+      : 'text-green-400';
 
   const links = action.related_links
     ?.split('\n')
@@ -147,20 +140,18 @@ export default function ActionDetailPage({
 
           <div className="p-8">
             <div className="flex flex-col md:flex-row md:items-start gap-6 mb-8">
-              {/* Kolom Kiri: Judul dan Deskripsi */}
               <div className="flex-grow">
                 <span className="text-6xl mb-4 block">{action.emoji}</span>
                 <h1 className="text-4xl font-bold mb-2">{action.title}</h1>
                 <p className="text-lg text-gray-400">{action.description}</p>
               </div>
-              {/* Kolom Kanan: Metadata */}
-              <div className="flex-shrink-0 grid grid-cols-3 gap-3 w-full md:w-auto">
-                <div className="flex flex-col items-center justify-center bg-gray-800/50 p-3 rounded-lg text-center">
-                  <span className="text-sm text-gray-400">Kategori</span>
-                  <span className="text-lg font-bold text-cyan-400">
-                    {action.category}
-                  </span>
-                </div>
+              <div className="flex-shrink-0 grid grid-cols-2 md:grid-cols-3 gap-3 w-full md:w-auto">
+                {/* 3. Perbarui InfoBadge untuk menampilkan poin per unit */}
+                <InfoBadge
+                  label="Poin"
+                  value={`+${action.points_per_unit}/${action.unit_name}`}
+                  colorClass="text-green-400"
+                />
                 <InfoBadge
                   label="Dampak"
                   value={action.impact_level}
@@ -178,6 +169,18 @@ export default function ActionDetailPage({
               className="prose prose-invert prose-lg max-w-none prose-p:text-gray-300 prose-li:text-gray-300"
               dangerouslySetInnerHTML={{ __html: action.content || '' }}
             />
+
+            {/* 4. Ganti <button> menjadi <Link> */}
+            {isLoggedIn && (
+              <div className="mt-10 text-center border-t border-gray-700 pt-6">
+                <Link
+                  href={`/log-action/${action.id}`}
+                  className="inline-block w-full max-w-xs font-bold py-3 px-6 rounded-full transition-all duration-300 text-white bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-600 hover:to-cyan-600 transform hover:scale-105"
+                >
+                  Saya Sudah Melakukan Ini
+                </Link>
+              </div>
+            )}
 
             {links && links.length > 0 && (
               <div className="mt-10 border-t border-gray-700 pt-6">

@@ -6,11 +6,12 @@ from ckeditor.fields import RichTextField
 
 # Model yang sudah ada untuk Aksi dan Peta (biarkan saja)
 class Action(models.Model):
+    # --- PILIHAN UNTUK DROPDOWN ---
     CATEGORY_CHOICES = [
         ('Listrik', 'Listrik'),
         ('Transportasi', 'Transportasi'),
         ('Konsumsi', 'Konsumsi'),
-        ('Bahan Bakar', 'Bahan Bakar'),
+        ('Daur Ulang', 'Daur Ulang'),
         ('Umum', 'Umum'),
     ]
     IMPACT_CHOICES = [
@@ -23,18 +24,29 @@ class Action(models.Model):
         ('Sedang', 'Sedang'),
         ('Sulit', 'Sulit'),
     ]
-    
+
+    # --- FIELD UTAMA ---
     emoji = models.CharField(max_length=5)
     title = models.CharField(max_length=100)
     description = models.TextField(help_text="Deskripsi singkat yang muncul di kartu.")
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='Umum')
     content = RichTextField(blank=True, null=True, help_text="Konten detail seperti langkah-langkah, penjelasan mendalam, dll.")
 
-    # --- FIELD BARU UNTUK INFORMASI DETAIL ---
+    # --- FIELD UNTUK MEKANISME INPUT ---
+    unit_name = models.CharField(
+        max_length=20, 
+        help_text="Satuan untuk aksi ini (misal: 'km', 'kg', 'botol')."
+    )
+    points_per_unit = models.FloatField(
+        default=1.0, 
+        help_text="Poin yang didapat per satuan."
+    )
+    
+    # --- FIELD DESKRIPTIF LAINNYA ---
     impact_level = models.CharField(max_length=10, choices=IMPACT_CHOICES, default='Sedang')
     effort_level = models.CharField(max_length=10, choices=EFFORT_CHOICES, default='Sedang')
     image = models.ImageField(
-        upload_to='aksi/',  # Gambar akan disimpan di folder 'media/aksi/'
+        upload_to='aksi/',
         blank=True, 
         null=True, 
         help_text="Upload gambar yang relevan dengan aksi ini."
@@ -120,6 +132,19 @@ class UserProfile(models.Model):
     class Meta:
         verbose_name = "User Profile"
         verbose_name_plural = "User Profiles"
+
+class ActivityLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='activity_logs')
+    action = models.ForeignKey(Action, on_delete=models.CASCADE)
+    value = models.FloatField(help_text="Jumlah yang diinput oleh pengguna (misal: 10 km)")
+    points_earned = models.IntegerField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.action.title} ({self.value} {self.action.unit_name}) on {self.timestamp.strftime('%Y-%m-%d')}"
+
+    class Meta:
+        ordering = ['-timestamp']
 
 # Sinyal untuk otomatis membuat UserProfile saat User baru dibuat
 @receiver(post_save, sender=User)
