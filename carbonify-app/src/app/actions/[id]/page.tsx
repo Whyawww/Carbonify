@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState, use } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 interface ActionDetail {
-  image: string | Blob | undefined;
+  image: string | null;
   id: number;
   emoji: string;
   title: string;
@@ -134,10 +135,13 @@ export default function ActionDetailPage({
 
         <article className="bg-gray-900/30 backdrop-blur-lg border border-gray-700 rounded-2xl overflow-hidden">
           {action.image && (
-            <img
+            <Image
               src={action.image}
               alt={action.title}
+              width={1200}
+              height={400}
               className="w-full h-64 object-cover"
+              priority
             />
           )}
 
