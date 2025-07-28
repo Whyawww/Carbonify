@@ -91,6 +91,8 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
     setScore((prevScore) => Math.max(0, prevScore - points));
   };
 
+  console.log('Context Value:', { score, isLoggedIn, avatarUrl });
+
   return (
     <GamificationContext.Provider
       value={{
