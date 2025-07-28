@@ -42,11 +42,16 @@ class GoogleLoginView(APIView):
             
             email = idinfo['email']
             name = idinfo.get('name', '')
+            avatar_url = idinfo.get('picture', None)
 
             user, created = User.objects.get_or_create(
                 email=email,
                 defaults={'username': email, 'first_name': name}
             )
+            profile, profile_created = UserProfile.objects.get_or_create(user=user)
+            if avatar_url:
+                profile.avatar_url = avatar_url
+                profile.save()
 
             token, created = Token.objects.get_or_create(user=user)
             
@@ -54,7 +59,8 @@ class GoogleLoginView(APIView):
                 'token': token.key,
                 'user_id': user.pk,
                 'email': user.email,
-                'name': user.first_name
+                'name': user.first_name,
+                'avatar_url': profile.avatar_url
             }, status=status.HTTP_200_OK)
 
         except ValueError as e:

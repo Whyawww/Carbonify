@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -8,42 +7,31 @@ import { TypeAnimation } from 'react-type-animation';
 import StatCard from '@/components/StatCard';
 import { weeklyChallenges } from '@/lib/gamificationData';
 import { useGamification } from '@/context/GamificationContext';
-import { useNotification } from '@/context/NotificationContext';
 import GoogleLoginButton from '@/components/GoogleLoginButton';
+import { useNotification } from '@/context/NotificationContext';
 
 export default function Home() {
-  const { addScore, completedChallenges } = useGamification();
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    setIsLoggedIn(!!token);
-  }, []);
-
+  const { addScore, completedChallenges, isLoggedIn, logout } =
+    useGamification();
   const router = useRouter();
   const { showNotification } = useNotification();
 
-  const handleLogout = () => {
-    if (window.confirm('Apakah Anda yakin ingin keluar?')) {
-      localStorage.removeItem('accessToken');
-      setIsLoggedIn(false);
-      showNotification('Anda berhasil keluar.', 'success');
-      router.push('/');
-    }
-  };
   const handleCompleteChallenge = async (
     challengeId: string,
     points: number,
   ) => {
     if (completedChallenges.includes(challengeId)) {
-      alert('Anda sudah menyelesaikan tantangan ini!');
+      showNotification('Anda sudah menyelesaikan tantangan ini!', 'error');
       return;
     }
 
     const token = localStorage.getItem('accessToken');
     if (!token) {
-      alert('Silakan login terlebih dahulu untuk menyelesaikan tantangan!');
+      showNotification(
+        'Silakan login terlebih dahulu untuk menyelesaikan tantangan!',
+        'error',
+      );
+      router.push('/login');
       return;
     }
 
@@ -65,22 +53,25 @@ export default function Home() {
         throw new Error(result.error || 'Gagal memperbarui skor.');
 
       addScore(points, challengeId);
-      alert('Selamat! Poin berhasil ditambahkan.');
+      showNotification('Selamat! Poin berhasil ditambahkan.', 'success');
 
       if (result.new_badges_awarded && result.new_badges_awarded.length > 0) {
         const badge = result.new_badges_awarded[0];
-        alert(`Luar biasa! Anda mendapatkan lencana baru: ${badge.name}`);
+        showNotification(
+          `Luar biasa! Anda mendapatkan lencana baru: ${badge.name}`,
+          'success',
+        );
       }
     } catch (err) {
       if (err instanceof Error) {
-        alert(`Error: ${err.message}`);
+        showNotification(`Error: ${err.message}`, 'error');
       }
     }
   };
 
   return (
     <div className="min-h-screen">
-      <section className="pt-12 md:pt-16 lg:pt-30">
+      <section className="pt-12 md:pt-16 lg:pt-30 md:flex md:flex-row md:justify-center md:items-center md:gap-10 mt-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-18">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             {/* Kolom Kiri*/}
@@ -109,7 +100,6 @@ export default function Home() {
             <div className="h-full flex items-center justify-center p-[2px] bg-gradient-to-r from-green-400/30 to-cyan-400/30 rounded-2xl w-full max-w-xl mx-auto ">
               <div className="h-full bg-gray-900/80 backdrop-blur-lg p-8 rounded-2xl text-center space-y-4 flex flex-col justify-center">
                 {isLoggedIn ? (
-                  // Tampilan Jika Sudah Login
                   <>
                     <h3 className="text-2xl font-bold text-white">
                       Selamat Datang Kembali!
@@ -120,7 +110,7 @@ export default function Home() {
                     </p>
                     <div className="flex justify-center pt-2">
                       <button
-                        onClick={handleLogout}
+                        onClick={logout}
                         className="font-bold py-3 px-8 rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors"
                       >
                         Keluar
@@ -128,7 +118,6 @@ export default function Home() {
                     </div>
                   </>
                 ) : (
-                  // Tampilan Jika Belum Login
                   <>
                     <h3 className="text-2xl font-bold text-white">
                       Mulai Perjalanan Anda

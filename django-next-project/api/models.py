@@ -112,6 +112,7 @@ class UserProfile(models.Model):
     score = models.IntegerField(default=0)
     badges = models.JSONField(default=list)
     completed_challenges = models.JSONField(default=list) 
+    avatar_url = models.URLField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.user.username

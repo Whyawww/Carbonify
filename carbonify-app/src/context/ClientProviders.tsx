@@ -10,9 +10,9 @@ export default function ClientProviders({ children }: { children: ReactNode }) {
 
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
-      <GamificationProvider>
-        <NotificationProvider>{children}</NotificationProvider>
-      </GamificationProvider>
+      <NotificationProvider>
+        <GamificationProvider>{children}</GamificationProvider>
+      </NotificationProvider>
     </GoogleOAuthProvider>
   );
 }
