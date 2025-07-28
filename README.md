@@ -2,7 +2,7 @@
 
 **Carbonify** platform web interaktif yang dirancang untuk meningkatkan kesadaran masyarakat terhadap emisi karbon pribadi dan mendorong aksi nyata dalam menghadapi perubahan iklim. Proyek ini dikembangkan sebagai solusi inovatif berbasis teknologi untuk mendukung pencapaian **Sustainable Development Goals (SDGs)**, khususnya dalam konteks **keberlanjutan lingkungan dan transformasi digital di Indonesia**.".
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Site-green?style=for-the-badge)](https://your-live-demo-url.com) 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Site-green?style=for-the-badge)](https://www.greenifycarbon.tech/) 
 
 
 ![Carbonify Screenshot](carbonify-app/public/Tampilan.png) 
