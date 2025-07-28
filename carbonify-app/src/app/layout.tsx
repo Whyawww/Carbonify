@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import CursorLight from '@/components/CursorLight';
 import FallingLeaves from '@/components/FallingLeaves';
 import Notification from '@/components/Notification';
+import Analytics from '@/components/Analytics';
 import 'leaflet/dist/leaflet.css';
 import './globals.css';
 
@@ -34,6 +35,7 @@ export default function RootLayout({
           <Footer />
           <Notification />
         </ClientProviders>
+        <Analytics />
       </body>
     </html>
   );
