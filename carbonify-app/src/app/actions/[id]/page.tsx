@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useGamification } from '@/context/GamificationContext';
 
+// Interface tidak perlu diubah
 interface ActionDetail {
   id: number;
   emoji: string;
@@ -58,19 +59,19 @@ export default function ActionDetailPage({
     async function fetchActionDetail() {
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/api/v1/actions/${id}/`,
+          `http://127.0.0.1:8000/api/v1/actions/${id}/`
         );
         if (!response.ok) {
           throw new Error('Gagal mengambil data aksi.');
         }
         const data = await response.json();
         setAction(data as ActionDetail);
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError('Terjadi kesalahan yang tidak diketahui.');
-        }
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        // --- PERBAIKAN UTAMA DI SINI ---
+        // Blok ini akan selalu dijalankan setelah try atau catch selesai.
+        setLoading(false);
       }
     }
 
@@ -95,18 +96,19 @@ export default function ActionDetailPage({
     );
   }
 
+  // ... sisa kode JSX tidak perlu diubah ...
   const impactColor =
     action.impact_level === 'Tinggi'
       ? 'text-red-400'
       : action.impact_level === 'Sedang'
-        ? 'text-yellow-400'
-        : 'text-green-400';
+      ? 'text-yellow-400'
+      : 'text-green-400';
   const effortColor =
     action.effort_level === 'Sulit'
       ? 'text-red-400'
       : action.effort_level === 'Sedang'
-        ? 'text-yellow-400'
-        : 'text-green-400';
+      ? 'text-yellow-400'
+      : 'text-green-400';
 
   const links = action.related_links
     ?.split('\n')
