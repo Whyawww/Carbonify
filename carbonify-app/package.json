@@ -11,6 +11,7 @@
     "validate": "npm run lint && npm run format"
   },
   "dependencies": {
+    "@lottiefiles/react-lottie-player": "^3.6.0",
     "@react-oauth/google": "^0.12.2",
     "@types/leaflet": "^1.9.20",
     "chart.js": "^4.5.0",
@@ -24,6 +25,7 @@
     "react-icons": "^5.5.0",
     "react-intersection-observer": "^9.16.0",
     "react-leaflet": "^5.0.0",
+    "react-lottie-player": "^2.1.0",
     "react-type-animation": "^3.2.0",
     "three": "^0.178.0"
   },

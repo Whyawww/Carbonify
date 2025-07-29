@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import {
   FaMedal,
   FaTasks,
@@ -11,6 +11,7 @@ import {
 import ProfileHeader from './ProfileHeader';
 import StatsGrid from './StatsGrid';
 import BadgesGallery from './BadgesGallery';
+import dynamic from 'next/dynamic';
 import ActivityChart from './ActivityChart';
 import ActivityFeed from './ActivityFeed';
 
@@ -29,6 +30,11 @@ const ProfilePage = () => {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const LottieRobot = useMemo(() => dynamic(
+    () => import('@/components/LottieRobot'),
+    { ssr: false }
+  ), []);
 
   const fetchProfileData = useCallback(async () => {
     setLoading(true);
@@ -73,8 +79,8 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text min-h-screen p-4 sm:p-6 lg:p-30 text-white">
-      <div className="max-w-4xl mx-auto">
+    <div className="bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text min-h-screen w-full pt-32 pb-20 relative overflow-hidden p-4 sm:p-6 lg:p-30 text-white">
+      <div className="max-w-4xl mx-auto relative z-10 container">
         <div className="flex justify-end mb-4">
           <button
             onClick={fetchProfileData}
@@ -126,6 +132,7 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+      <LottieRobot />
     </div>
   );
 };

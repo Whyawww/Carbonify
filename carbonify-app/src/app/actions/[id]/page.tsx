@@ -66,11 +66,11 @@ export default function ActionDetailPage({
         }
         const data = await response.json();
         setAction(data as ActionDetail);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        }
       } finally {
-        // --- PERBAIKAN UTAMA DI SINI ---
-        // Blok ini akan selalu dijalankan setelah try atau catch selesai.
         setLoading(false);
       }
     }
