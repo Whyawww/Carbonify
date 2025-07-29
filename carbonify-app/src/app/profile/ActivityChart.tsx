@@ -1,4 +1,3 @@
-// src/app/profile/ActivityChart.tsx
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -10,7 +9,14 @@ import {
   Legend,
 } from 'chart.js';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+);
 
 interface Props {
   breakdown: { [key: string]: number };
@@ -23,7 +29,7 @@ const ActivityChart = ({ breakdown }: Props) => {
       {
         label: 'Jumlah Aksi',
         data: Object.values(breakdown),
-        backgroundColor: 'rgba(52, 211, 153, 0.6)', // warna hijau
+        backgroundColor: 'rgba(52, 211, 153, 0.6)',
         borderColor: 'rgba(52, 211, 153, 1)',
         borderWidth: 1,
       },
@@ -42,7 +48,7 @@ const ActivityChart = ({ breakdown }: Props) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-4">
+    <div className="bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text border-2 border-green-500 text-white rounded-lg shadow p-4">
       <Bar data={data} options={options} />
     </div>
   );

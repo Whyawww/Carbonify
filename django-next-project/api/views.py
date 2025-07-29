@@ -277,8 +277,16 @@ class CompleteActionView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        # 1. Frontend akan mengirim 'action_id', bukan 'challenge_id' atau 'points'
+        print("="*50)
+        print(">>> PERMINTAAN MASUK KE COMPLETE-ACTION <<<")
+        print(f"User: {request.user.username}")
+        print("Data yang diterima (request.data):")
+        print(request.data)
+        print("="*50)
+
         action_id_str = request.data.get('action_id')
+
+        print(f"Mencoba mendapatkan 'action_id': {action_id_str}")
         
         if not action_id_str:
             return Response(
@@ -287,24 +295,21 @@ class CompleteActionView(APIView):
             )
         
         try:
-            # 2. Cari Aksi berdasarkan ID yang dikirim.
-            action_to_complete = Action.objects.get(pk=int(action_id_str))
+            action_to_complete = Action.objects.get(action_id=action_id_str)
             
-            # 3. Ambil poin langsung dari database, bukan dari frontend
+            # Ambil poin dari database untuk keamanan
             points_to_add = action_to_complete.points
-            action_id_int = action_to_complete.pk
-
+            
             profile, created = UserProfile.objects.get_or_create(user=request.user)
 
             # 4. Periksa apakah ID angka sudah ada di daftar
-            if action_id_int in profile.completed_challenges:
+            if action_id_str in profile.completed_challenges:
                 return Response(
                     {'error': 'Aksi ini sudah pernah Anda selesaikan.'}, 
                     status=status.HTTP_400_BAD_REQUEST
                 )
-
             profile.score += points_to_add
-            profile.completed_challenges.append(action_id_int) 
+            profile.completed_challenges.append(action_id_str) 
             
             new_badges = check_and_award_badges(profile)
             profile.save()

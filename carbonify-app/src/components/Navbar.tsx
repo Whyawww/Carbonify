@@ -3,7 +3,14 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { FaBars, FaTimes, FaUserCircle, FaIdCard, FaSignOutAlt, FaGift } from 'react-icons/fa'; // Menambahkan ikon baru
+import {
+  FaBars,
+  FaTimes,
+  FaUserCircle,
+  FaIdCard,
+  FaSignOutAlt,
+  FaGift,
+} from 'react-icons/fa'; // Menambahkan ikon baru
 import Image from 'next/image';
 import { useGamification } from '@/context/GamificationContext';
 
@@ -180,10 +187,7 @@ const Navbar = () => {
                   )}
                   <span>Lihat Profil</span>
                 </Link>
-                 <Link
-                  href="/redeem"
-                  className="text-xl font-medium text-white"
-                >
+                <Link href="/redeem" className="text-xl font-medium text-white">
                   Tukarkan Poin
                 </Link>
                 {/* --- AKHIR PERUBAHAN --- */}

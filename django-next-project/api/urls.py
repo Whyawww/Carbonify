@@ -37,7 +37,7 @@ urlpatterns = [
     
     # Endpoint untuk Fitur Gamifikasi
     path('leaderboard/', LeaderboardView.as_view(), name='leaderboard'),
-    path('complete-action/', CompleteActionView.as_view(), name='complete-action'), # Untuk tantangan
+    path('complete-action/', CompleteActionView.as_view(), name='complete-action'),
     path('log-action/', LogInputActionView.as_view(), name='log-action'), # Untuk aksi nyata (PERBAIKAN DI SINI)
     
     # Endpoint untuk Fitur Lainnya

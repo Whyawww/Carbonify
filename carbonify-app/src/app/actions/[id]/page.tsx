@@ -5,7 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useGamification } from '@/context/GamificationContext';
 
-// 1. Perbarui Interface sesuai model baru
 interface ActionDetail {
   id: number;
   emoji: string;
@@ -17,7 +16,6 @@ interface ActionDetail {
   effort_level: string;
   image: string | null;
   related_links: string | null;
-  // Tambahkan field baru & hapus 'points'
   unit_name: string;
   points_per_unit: number;
 }
@@ -48,7 +46,6 @@ export default function ActionDetailPage({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Cukup ambil isLoggedIn untuk menentukan apakah tombol harus ditampilkan
   const { isLoggedIn } = useGamification();
 
   useEffect(() => {
@@ -61,25 +58,24 @@ export default function ActionDetailPage({
     async function fetchActionDetail() {
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/api/v1/actions/${id}/`
+          `http://127.0.0.1:8000/api/v1/actions/${id}/`,
         );
         if (!response.ok) {
           throw new Error('Gagal mengambil data aksi.');
         }
         const data = await response.json();
         setAction(data as ActionDetail);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('Terjadi kesalahan yang tidak diketahui.');
+        }
       }
     }
 
     fetchActionDetail();
   }, [id]);
-
-  // 2. Hapus fungsi handleCompleteAction
-  // Fungsi ini tidak lagi diperlukan di halaman ini.
 
   if (loading) {
     return (
@@ -92,7 +88,9 @@ export default function ActionDetailPage({
   if (error || !action) {
     return (
       <div className="min-h-screen flex justify-center items-center">
-        <p className="text-xl text-red-500">{error || 'Tidak ada data aksi.'}</p>
+        <p className="text-xl text-red-500">
+          {error || 'Tidak ada data aksi.'}
+        </p>
       </div>
     );
   }
@@ -101,14 +99,14 @@ export default function ActionDetailPage({
     action.impact_level === 'Tinggi'
       ? 'text-red-400'
       : action.impact_level === 'Sedang'
-      ? 'text-yellow-400'
-      : 'text-green-400';
+        ? 'text-yellow-400'
+        : 'text-green-400';
   const effortColor =
     action.effort_level === 'Sulit'
       ? 'text-red-400'
       : action.effort_level === 'Sedang'
-      ? 'text-yellow-400'
-      : 'text-green-400';
+        ? 'text-yellow-400'
+        : 'text-green-400';
 
   const links = action.related_links
     ?.split('\n')
@@ -146,7 +144,6 @@ export default function ActionDetailPage({
                 <p className="text-lg text-gray-400">{action.description}</p>
               </div>
               <div className="flex-shrink-0 grid grid-cols-2 md:grid-cols-3 gap-3 w-full md:w-auto">
-                {/* 3. Perbarui InfoBadge untuk menampilkan poin per unit */}
                 <InfoBadge
                   label="Poin"
                   value={`+${action.points_per_unit}/${action.unit_name}`}
@@ -170,7 +167,6 @@ export default function ActionDetailPage({
               dangerouslySetInnerHTML={{ __html: action.content || '' }}
             />
 
-            {/* 4. Ganti <button> menjadi <Link> */}
             {isLoggedIn && (
               <div className="mt-10 text-center border-t border-gray-700 pt-6">
                 <Link

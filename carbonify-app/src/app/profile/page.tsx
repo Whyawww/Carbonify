@@ -1,18 +1,21 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react'; // Tambahkan useCallback
-import { FaUser, FaMedal, FaTasks, FaChartBar, FaHistory, FaSync } from 'react-icons/fa'; // Tambahkan FaSync
-
-// Impor komponen-komponen
+import { useEffect, useState, useCallback } from 'react';
+import {
+  FaMedal,
+  FaTasks,
+  FaChartBar,
+  FaHistory,
+  FaSync,
+} from 'react-icons/fa';
 import ProfileHeader from './ProfileHeader';
 import StatsGrid from './StatsGrid';
 import BadgesGallery from './BadgesGallery';
 import ActivityChart from './ActivityChart';
 import ActivityFeed from './ActivityFeed';
 
-// Definisikan tipe data (tidak berubah)
 interface ProfileData {
-  user: { first_name: string; email: string; date_joined: string; };
+  user: { first_name: string; email: string; date_joined: string };
   score: number;
   badges: string[];
   avatar_url: string;
@@ -27,50 +30,56 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Gunakan useCallback agar fungsi tidak dibuat ulang setiap render
   const fetchProfileData = useCallback(async () => {
-    setLoading(true); // Tampilkan loading setiap kali refresh
+    setLoading(true);
+    setError(null);
     try {
       const token = localStorage.getItem('accessToken');
-      if (!token) throw new Error('Tidak terautentikasi');
-      
+      if (!token)
+        throw new Error('Tidak terautentikasi. Silakan login kembali.');
+
       const response = await fetch('http://127.0.0.1:8000/api/v1/profile/', {
-        headers: { 'Authorization': `Token ${token}` },
-        cache: 'no-store', // Mencegah caching
+        headers: { Authorization: `Token ${token}` },
+        cache: 'no-store',
       });
 
       if (!response.ok) throw new Error('Gagal mengambil data profil');
-      
+
       const data: ProfileData = await response.json();
       setProfile(data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Fetch data saat komponen pertama kali dimuat
   useEffect(() => {
     fetchProfileData();
   }, [fetchProfileData]);
 
   if (loading) {
-    return <div className="text-center p-10">Memuat profil...</div>;
+    return <div className="text-center p-10 text-white">Memuat profil...</div>;
   }
 
   if (error || !profile) {
-    return <div className="text-center p-10 text-red-500">Error: {error || 'Profil tidak ditemukan.'}</div>;
+    return (
+      <div className="text-center p-10 text-white">
+        Error: {error || 'Profil tidak ditemukan.'}
+      </div>
+    );
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen p-4 sm:p-6 lg:p-8">
+    <div className="bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text min-h-screen p-4 sm:p-6 lg:p-30 text-white">
       <div className="max-w-4xl mx-auto">
-        {/* Tombol Refresh */}
         <div className="flex justify-end mb-4">
           <button
             onClick={fetchProfileData}
-            className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 transition"
+            className="flex items-center bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text py-4 gap-2 text-sm text-transparent hover:text-white transition"
+            disabled={loading}
           >
             <FaSync className={loading ? 'animate-spin' : ''} />
             Perbarui Data
@@ -85,27 +94,36 @@ const ProfilePage = () => {
         />
 
         <div className="mt-8 space-y-8">
-          {/* ... sisa komponen (StatsGrid, BadgesGallery, etc.) tidak berubah ... */}
           <div>
-             <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2"><FaChartBar /> Statistik Anda</h2>
-             <StatsGrid
-               totalActions={profile.total_actions}
-               joinDate={profile.user.date_joined}
-               activityBreakdown={profile.activity_breakdown}
-             />
-           </div>
-           <div>
-             <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2"><FaMedal /> Lencana Prestasi</h2>
-             <BadgesGallery earnedBadges={profile.badges} />
-           </div>
-           <div>
-             <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2"><FaTasks /> Rincian Aktivitas</h2>
-             <ActivityChart breakdown={profile.activity_breakdown} />
-           </div>
-           <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2"><FaHistory /> Riwayat Aksi</h2>
-              <ActivityFeed completedChallenges={profile.completed_challenges.map(String)} />
-            </div>
+            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+              <FaChartBar /> Statistik Anda
+            </h2>
+            <StatsGrid
+              totalActions={profile.total_actions}
+              joinDate={profile.user.date_joined}
+              activityBreakdown={profile.activity_breakdown}
+            />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+              <FaMedal /> Lencana Prestasi
+            </h2>
+            <BadgesGallery earnedBadges={profile.badges} />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+              <FaTasks /> Rincian Aktivitas
+            </h2>
+            <ActivityChart breakdown={profile.activity_breakdown} />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+              <FaHistory /> Riwayat Aksi
+            </h2>
+            <ActivityFeed
+              completedChallenges={profile.completed_challenges.map(String)}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -26,6 +26,8 @@ class Action(models.Model):
     ]
 
     # --- FIELD UTAMA ---
+    action_id = models.CharField(max_length=20, unique=True, help_text="ID unik untuk tantangan, cth: wc01")
+    points = models.IntegerField(default=10, help_text="Poin yang didapat dari menyelesaikan aksi ini.")
     emoji = models.CharField(max_length=5)
     title = models.CharField(max_length=100)
     description = models.TextField(help_text="Deskripsi singkat yang muncul di kartu.")
