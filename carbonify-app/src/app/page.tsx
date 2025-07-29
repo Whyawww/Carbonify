@@ -44,7 +44,7 @@ export default function Home() {
             'Content-Type': 'application/json',
             Authorization: `Token ${token}`,
           },
-          body: JSON.stringify({ points: points, challenge_id: challengeId }),
+          body: JSON.stringify({ points: points, action_id: challengeId }),
         },
       );
 
@@ -455,10 +455,8 @@ export default function Home() {
               buktikan kontribusimu!
             </p>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {weeklyChallenges.map((challenge) => {
-              // 'isCompleted' sekarang menggunakan data dari context
               const isCompleted = completedChallenges.includes(challenge.id);
               return (
                 <div
@@ -477,14 +475,11 @@ export default function Home() {
                         handleCompleteChallenge(challenge.id, challenge.points)
                       }
                       disabled={isCompleted}
-                      className={`
-                        font-bold py-2 px-6 rounded-md text-white transition-all duration-300 mt-4
-                        ${
-                          isCompleted
-                            ? 'bg-gray-600 cursor-not-allowed'
-                            : 'bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-600 hover:to-cyan-600'
-                        }
-                      `}
+                      className={`font-bold py-2 px-6 rounded-md text-white transition-all duration-300 mt-4 ${
+                        isCompleted
+                          ? 'bg-gray-600 cursor-not-allowed'
+                          : 'bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-600 hover:to-cyan-600'
+                      }`}
                     >
                       {isCompleted
                         ? 'Selesai'

@@ -12,6 +12,8 @@ const GoogleLoginButton = () => {
   const { fetchUserData } = useGamification();
 
   const login = useGoogleLogin({
+    scope: 'email profile',
+
     onSuccess: async (tokenResponse) => {
       try {
         const response = await fetch(

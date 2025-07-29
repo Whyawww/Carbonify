@@ -13,9 +13,11 @@ from .views import (
     FaktorEmisiBahanBakarViewSet,
     CompleteActionView,
     UserProfileView,
-    LeaderboardView 
+    LeaderboardView,
+    LogInputActionView,
 )
 
+# Router untuk ViewSets (daftar data)
 v1_router = DefaultRouter()
 v1_router.register(r'actions', ActionViewSet, basename='action')
 v1_router.register(r'ecopoints', EcoPointViewSet, basename='ecopoint')
@@ -24,15 +26,20 @@ v1_router.register(r'choices/transportasi', FaktorEmisiTransportasiViewSet, base
 v1_router.register(r'choices/makanan', FaktorEmisiMakananViewSet, basename='choices-makanan')
 v1_router.register(r'choices/bahan-bakar', FaktorEmisiBahanBakarViewSet, basename='choices-bahan-bakar')
 
-# URL yang tidak menggunakan router
+# URL Patterns untuk view tunggal
 urlpatterns = [
-    # +++ URL BARU UNTUK LOGIN GOOGLE +++
-    # URL ini akan menjadi: /api/v1/auth/google/
+    # Semua URL dari router
+    path('', include(v1_router.urls)),
+    
+    # Endpoint untuk Autentikasi dan Profil
     path('auth/google/', GoogleLoginView.as_view(), name='google_login'),
     path('profile/', UserProfileView.as_view(), name='user-profile'),
-    path('calculate/', CarbonCalculatorView.as_view(), name='calculate_carbon'),
-
-    path('complete-action/', CompleteActionView.as_view(), name='complete-action'),
+    
+    # Endpoint untuk Fitur Gamifikasi
     path('leaderboard/', LeaderboardView.as_view(), name='leaderboard'),
-    path('', include(v1_router.urls)),
+    path('complete-action/', CompleteActionView.as_view(), name='complete-action'),
+    path('log-action/', LogInputActionView.as_view(), name='log-action'), # Untuk aksi nyata (PERBAIKAN DI SINI)
+    
+    # Endpoint untuk Fitur Lainnya
+    path('calculate/', CarbonCalculatorView.as_view(), name='calculate_carbon'),
 ]

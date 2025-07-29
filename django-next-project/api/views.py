@@ -12,38 +12,47 @@ from rest_framework.permissions import IsAuthenticated
 # Import untuk verifikasi Google
 from google.oauth2 import id_token
 from google.auth.transport import requests
+import requests
 
 from math import radians, sin, cos, sqrt, atan2
 from .models import (
-    Action, EcoPoint, FaktorEmisiBahanBakar,
+    Action, ActivityLog, EcoPoint, FaktorEmisiBahanBakar,
     FaktorEmisiListrik, FaktorEmisiTransportasi, FaktorEmisiMakanan, UserProfile
 )
 from .serializers import (
     ActionSerializer, EcoPointSerializer, FaktorEmisiBahanBakarSerializer,
     FaktorEmisiListrikSerializer, FaktorEmisiTransportasiSerializer, FaktorEmisiMakananSerializer,
-    ActionDetailSerializer, LeaderboardSerializer, UserProfileSerializer
+    ActionDetailSerializer, LeaderboardSerializer, UserProfileDetailSerializer, UserProfileSerializer
 )
 
 # +++ KODE BARU UNTUK LOGIN GOOGLE +++
 class GoogleLoginView(APIView):
     def post(self, request, *args, **kwargs):
-        auth_token = request.data.get('token')
-        if not auth_token:
+        # 1. BACA KEY YANG BENAR ('access_token') DARI FRONTEND
+        access_token = request.data.get('access_token')
+        if not access_token:
             return Response(
-                {"error": "Token Google tidak ditemukan."},
+                {"error": "Google Access Token tidak ditemukan."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         try:
-            # Verifikasi token dengan Google
-            idinfo = id_token.verify_oauth2_token(
-                auth_token, requests.Request(), settings.GOOGLE_CLIENT_ID
-            )
+            # 2. GUNAKAN ACCESS TOKEN UNTUK MENGAMBIL INFO PENGGUNA DARI GOOGLE
+            # Ini adalah cara yang benar untuk memvalidasi access token.
+            userinfo_url = 'https://www.googleapis.com/oauth2/v3/userinfo'
+            headers = {'Authorization': f'Bearer {access_token}'}
+            google_response = requests.get(userinfo_url, headers=headers)
             
-            email = idinfo['email']
-            name = idinfo.get('name', '')
-            avatar_url = idinfo.get('picture', None)
+            # Jika token tidak valid, Google akan mengembalikan error
+            google_response.raise_for_status() 
+            
+            user_info = google_response.json()
+            
+            email = user_info['email']
+            name = user_info.get('name', '')
+            avatar_url = user_info.get('picture', None)
 
+            # Sisa logika untuk membuat user dan token sudah benar
             user, created = User.objects.get_or_create(
                 email=email,
                 defaults={'username': email, 'first_name': name}
@@ -63,16 +72,10 @@ class GoogleLoginView(APIView):
                 'avatar_url': profile.avatar_url
             }, status=status.HTTP_200_OK)
 
-        except ValueError as e:
-            # Jika verifikasi gagal, kita cetak error detailnya di terminal
-            print("="*50)
-            print("❌ Verifikasi Token GAGAL!")
-            print(f"CLIENT ID DI SETTINGS.PY: {settings.GOOGLE_CLIENT_ID}")
-            print(f"DETAIL ERROR: {e}")
-            print("="*50)
-            
+        except Exception as e:
+            # Menangkap error jika token tidak valid atau kedaluwarsa
             return Response(
-                {"error": "Token Google tidak valid.", "details": str(e)},
+                {"error": "Token Google tidak valid atau telah kedaluwarsa.", "details": str(e)},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -271,40 +274,59 @@ def check_and_award_badges(profile):
 
 # View untuk menyelesaikan aksi
 class CompleteActionView(APIView):
-    permission_classes = [IsAuthenticated] # Ini akan memeriksa token secara otomatis
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        points_to_add = request.data.get('points')
-        challenge_id = request.data.get('challenge_id')
-        if not points_to_add or not challenge_id:
+        print("="*50)
+        print(">>> PERMINTAAN MASUK KE COMPLETE-ACTION <<<")
+        print(f"User: {request.user.username}")
+        print("Data yang diterima (request.data):")
+        print(request.data)
+        print("="*50)
+
+        action_id_str = request.data.get('action_id')
+
+        print(f"Mencoba mendapatkan 'action_id': {action_id_str}")
+        
+        if not action_id_str:
             return Response(
-                {'error': 'Points dan challenge_id harus disertakan.'}, 
+                {'error': 'ID Aksi (action_id) harus disertakan.'}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
         
         try:
+            action_to_complete = Action.objects.get(action_id=action_id_str)
+            
+            # Ambil poin dari database untuk keamanan
+            points_to_add = action_to_complete.points
+            
             profile, created = UserProfile.objects.get_or_create(user=request.user)
 
-            if challenge_id in profile.completed_challenges:
+            # 4. Periksa apakah ID angka sudah ada di daftar
+            if action_id_str in profile.completed_challenges:
                 return Response(
-                    {'error': 'Tantangan ini sudah pernah diselesaikan.'}, 
+                    {'error': 'Aksi ini sudah pernah Anda selesaikan.'}, 
                     status=status.HTTP_400_BAD_REQUEST
                 )
-
-            profile.score += int(points_to_add)
-            profile.completed_challenges.append(challenge_id)
+            profile.score += points_to_add
+            profile.completed_challenges.append(action_id_str) 
             
             new_badges = check_and_award_badges(profile)
             profile.save()
 
             return Response({
-                'success': 'Skor berhasil diperbarui', 
+                'success': 'Aksi berhasil diselesaikan!', 
                 'new_score': profile.score,
                 'new_badges_awarded': new_badges
             }, status=status.HTTP_200_OK)
             
+        except Action.DoesNotExist:
+            return Response({'error': 'Aksi dengan ID tersebut tidak ditemukan.'}, status=status.HTTP_404_NOT_FOUND)
+        except (ValueError, TypeError):
+             return Response({'error': 'Action ID tidak valid.'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 # View untuk leaderboard
 class LeaderboardView(generics.ListAPIView):
@@ -321,7 +343,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 # Tambahkan view baru di api/views.py
 class UserProfileView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = UserProfileSerializer
+    serializer_class = UserProfileDetailSerializer
 
     def get_object(self):
         # Mengembalikan profil dari user yang sedang login
@@ -331,3 +353,50 @@ class UserProfileView(generics.RetrieveAPIView):
 class FaktorEmisiBahanBakarViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = FaktorEmisiBahanBakar.objects.all().order_by('jenis_bahan_bakar')
     serializer_class = FaktorEmisiBahanBakarSerializer
+
+class LogInputActionView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        action_id_str = request.data.get('action_id')
+        value_str = request.data.get('value')
+
+        if not action_id_str or not value_str:
+            return Response({'error': 'action_id dan value harus disertakan.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            value = float(value_str)
+            action = Action.objects.get(pk=int(action_id_str))
+            
+            points_earned = round(value * action.points_per_unit)
+
+            if points_earned <= 0:
+                return Response({'error': 'Input tidak valid.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            profile, created = UserProfile.objects.get_or_create(user=request.user)
+            profile.score += points_earned
+            
+            # --- PERUBAHAN UTAMA: BUAT LOG BARU ---
+            # Buat entri baru di buku catatan aktivitas
+            ActivityLog.objects.create(
+                user=request.user,
+                action=action,
+                value=value,
+                points_earned=points_earned
+            )
+            # Kita tidak lagi menggunakan completed_challenges untuk ini
+            # --- AKHIR PERUBAHAN ---
+            
+            new_badges = check_and_award_badges(profile)
+            profile.save()
+
+            return Response({
+                'success': f'Berhasil mencatat {value} {action.unit_name} dan mendapatkan {points_earned} poin!',
+                'new_score': profile.score,
+                'new_badges_awarded': new_badges
+            }, status=status.HTTP_200_OK)
+
+        except Action.DoesNotExist:
+            return Response({'error': 'Aksi tidak ditemukan.'}, status=status.HTTP_404_NOT_FOUND)
+        except (ValueError, TypeError):
+            return Response({'error': 'ID Aksi atau nilai input tidak valid.'}, status=status.HTTP_400_BAD_REQUEST)
