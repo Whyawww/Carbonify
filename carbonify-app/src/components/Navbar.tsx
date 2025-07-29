@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { FaBars, FaTimes, FaUserCircle } from 'react-icons/fa';
+import { FaBars, FaTimes, FaUserCircle, FaIdCard, FaSignOutAlt, FaGift } from 'react-icons/fa'; // Menambahkan ikon baru
 import Image from 'next/image';
 import { useGamification } from '@/context/GamificationContext';
 
@@ -95,21 +95,34 @@ const Navbar = () => {
               </button>
               {isProfileOpen && (
                 <div className="absolute top-12 right-0 w-48 bg-gray-800 border border-gray-600 rounded-xl shadow-lg p-2 space-y-1 z-50 animate-dropdown">
-                  <div className="px-2 py-1 text-sm text-gray-400">
-                    Poin: {score}
+                  <div className="px-2 py-1 text-sm text-gray-400 border-b border-gray-700 mb-1">
+                    Poin: <strong>{score}</strong>
                   </div>
+                  {/* --- PERUBAHAN DI SINI (DESKTOP) --- */}
+                  <Link
+                    href="/profile"
+                    className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-blue-600"
+                  >
+                    <FaIdCard />
+                    <span>Lihat Profil</span>
+                  </Link>
                   <Link
                     href="/redeem"
-                    className="block w-full text-left px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-green-600"
+                    className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-green-600"
                   >
-                    Tukarkan Poin
+                    <FaGift />
+                    <span>Tukarkan Poin</span>
                   </Link>
-                  <button
-                    onClick={logout}
-                    className="block w-full text-left px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-red-600"
-                  >
-                    Keluar
-                  </button>
+                  <div className="pt-1 border-t border-gray-700">
+                    <button
+                      onClick={logout}
+                      className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-red-600"
+                    >
+                      <FaSignOutAlt />
+                      <span>Keluar</span>
+                    </button>
+                  </div>
+                  {/* --- AKHIR PERUBAHAN --- */}
                 </div>
               )}
             </div>
@@ -149,8 +162,9 @@ const Navbar = () => {
           <div className="pt-4 mt-2 border-t border-gray-600 w-4/5 text-center space-y-4">
             {isLoggedIn ? (
               <>
+                {/* --- PERUBAHAN DI SINI (MOBILE) --- */}
                 <Link
-                  href="/redeem"
+                  href="/profile"
                   className="flex items-center justify-center space-x-2 text-xl font-medium text-white"
                 >
                   {avatarUrl ? (
@@ -164,8 +178,15 @@ const Navbar = () => {
                   ) : (
                     <FaUserCircle className="text-2xl text-green-400" />
                   )}
-                  <span>Profil & Poin</span>
+                  <span>Lihat Profil</span>
                 </Link>
+                 <Link
+                  href="/redeem"
+                  className="text-xl font-medium text-white"
+                >
+                  Tukarkan Poin
+                </Link>
+                {/* --- AKHIR PERUBAHAN --- */}
                 <button
                   onClick={logout}
                   className="block w-full bg-red-500 hover:bg-red-600 text-white text-center font-bold py-3 rounded-lg transition"
