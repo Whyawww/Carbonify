@@ -281,7 +281,7 @@ export default function CalculatorPage() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center pt-32 pb-20">
       <div className="container mx-auto px-4 max-w-4xl">
-        <h1 className="text-4xl font-bold text-center mb-2">
+        <h1 className="text-4xl md:text-5xl font-bold text-center mb-2 bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-cyan-400">
           Kalkulator Jejak Karbon
         </h1>
         <TypeAnimation
