@@ -400,3 +400,34 @@ class LogInputActionView(APIView):
             return Response({'error': 'Aksi tidak ditemukan.'}, status=status.HTTP_404_NOT_FOUND)
         except (ValueError, TypeError):
             return Response({'error': 'ID Aksi atau nilai input tidak valid.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+class CompleteWeeklyChallengeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        points_to_add = request.data.get('points')
+        challenge_id = request.data.get('challenge_id') # Menerima ID seperti 'wc01'
+        
+        if not points_to_add or not challenge_id:
+            return Response({'error': 'Points dan challenge_id harus disertakan.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            profile, created = UserProfile.objects.get_or_create(user=request.user)
+
+            if challenge_id in profile.completed_challenges:
+                return Response({'error': 'Tantangan ini sudah pernah diselesaikan.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            profile.score += int(points_to_add)
+            profile.completed_challenges.append(challenge_id)
+            
+            new_badges = check_and_award_badges(profile)
+            profile.save()
+
+            return Response({
+                'success': 'Tantangan berhasil diselesaikan!', 
+                'new_score': profile.score,
+                'new_badges_awarded': new_badges
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

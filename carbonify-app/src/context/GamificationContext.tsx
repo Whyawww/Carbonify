@@ -8,18 +8,30 @@ import {
   useCallback,
   useEffect,
 } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useNotification } from '@/context/NotificationContext';
 
-interface GamificationContextType {
+// Definisikan tipe data profil yang lengkap untuk digunakan di seluruh aplikasi
+interface ProfileData {
+  user: {
+    first_name: string;
+    email: string;
+    date_joined: string;
+  };
   score: number;
+  badges: string[];
+  avatar_url: string;
+  completed_challenges: (string | number)[];
+  rank: number;
+  total_actions: number;
+  activity_breakdown: { [key: string]: number };
+}
+
+interface GamificationContextType {
   isLoggedIn: boolean;
-  avatarUrl: string | null;
-  completedChallenges: string[];
+  profile: ProfileData | null; // Simpan seluruh data profil dalam satu objek
   fetchUserData: (token: string) => Promise<void>;
-  addScore: (points: number, challengeId: string) => void;
   logout: () => void;
-  reduceScore: (points: number) => void;
 }
 
 const GamificationContext = createContext<GamificationContextType | undefined>(
@@ -27,83 +39,59 @@ const GamificationContext = createContext<GamificationContextType | undefined>(
 );
 
 export const GamificationProvider = ({ children }: { children: ReactNode }) => {
-  const [score, setScore] = useState(0);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [completedChallenges, setCompletedChallenges] = useState<string[]>([]);
+  const [profile, setProfile] = useState<ProfileData | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   const router = useRouter();
-  const pathname = usePathname();
   const { showNotification } = useNotification();
 
-  const resetState = () => {
-    setScore(0);
-    setAvatarUrl(null);
-    setCompletedChallenges([]);
+  const logout = useCallback(() => {
+    localStorage.removeItem('accessToken');
+    setProfile(null);
     setIsLoggedIn(false);
-  };
+    // Redirect ke home setelah logout
+    router.push('/');
+  }, [router]);
 
   const fetchUserData = useCallback(async (token: string) => {
     try {
       const response = await fetch('http://127.0.0.1:8000/api/v1/profile/', {
         headers: { Authorization: `Token ${token}` },
+        cache: 'no-store', // Selalu ambil data terbaru dari server
       });
-      const data = await response.json();
-      if (response.ok) {
-        setScore(data.score);
-        setCompletedChallenges(data.completed_challenges);
-        setAvatarUrl(data.avatar_url);
-        setIsLoggedIn(true);
-      } else {
-        localStorage.removeItem('accessToken');
-        resetState();
+      if (!response.ok) {
+        throw new Error('Sesi tidak valid, harap login kembali.');
       }
+      const data: ProfileData = await response.json();
+      setProfile(data);
+      setIsLoggedIn(true);
     } catch (error) {
-      console.error('Gagal mengambil data pengguna:', error);
-      resetState();
+      console.error(error);
+      logout(); // Logout jika token tidak valid atau ada error
     }
-  }, []);
+  }, [logout]);
 
+  // Efek ini hanya berjalan sekali saat aplikasi pertama kali dimuat
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (token) {
       fetchUserData(token);
-    } else {
-      resetState();
     }
-  }, [pathname, fetchUserData]);
+  }, [fetchUserData]);
 
-  const addScore = (points: number, challengeId: string) => {
-    setScore((prevScore) => prevScore + points);
-    setCompletedChallenges((prev) => [...prev, challengeId]);
-  };
-
-  const logout = useCallback(() => {
-    if (window.confirm('Apakah Anda yakin ingin keluar?')) {
-      localStorage.removeItem('accessToken');
-      resetState();
-      showNotification('Anda berhasil keluar.', 'success');
-      router.push('/');
-    }
-  }, [router, showNotification]);
-
-  const reduceScore = (points: number) => {
-    setScore((prevScore) => Math.max(0, prevScore - points));
-  };
-
-  console.log('Context Value:', { score, isLoggedIn, avatarUrl });
+  const handleLogoutConfirmation = () => {
+     if (window.confirm('Apakah Anda yakin ingin keluar?')) {
+       logout();
+       showNotification('Anda berhasil keluar.', 'success');
+     }
+  }
 
   return (
     <GamificationContext.Provider
       value={{
-        score,
         isLoggedIn,
-        avatarUrl,
-        completedChallenges,
+        profile,
         fetchUserData,
-        addScore,
-        logout,
-        reduceScore,
+        logout: handleLogoutConfirmation, // Gunakan fungsi konfirmasi
       }}
     >
       {children}

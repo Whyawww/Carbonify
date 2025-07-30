@@ -9,65 +9,93 @@ import { weeklyChallenges } from '@/lib/gamificationData';
 import { useGamification } from '@/context/GamificationContext';
 import GoogleLoginButton from '@/components/GoogleLoginButton';
 import { useNotification } from '@/context/NotificationContext';
+import { FaCheckCircle } from 'react-icons/fa';
+import { useState } from 'react';
 
-export default function Home() {
-  const { addScore, completedChallenges, isLoggedIn, logout } =
-    useGamification();
-  const router = useRouter();
+// -- KOMPONEN BARU UNTUK KARTU TANTANGAN --
+const ChallengeCard = ({ challenge }: { challenge: typeof weeklyChallenges[0] }) => {
+  const { isLoggedIn, profile, fetchUserData } = useGamification();
   const { showNotification } = useNotification();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
-  const handleCompleteChallenge = async (
-    challengeId: string,
-    points: number,
-  ) => {
-    if (completedChallenges.includes(challengeId)) {
-      showNotification('Anda sudah menyelesaikan tantangan ini!', 'error');
-      return;
-    }
+  const isCompleted = profile?.completed_challenges?.includes(challenge.id);
 
-    const token = localStorage.getItem('accessToken');
-    if (!token) {
-      showNotification(
-        'Silakan login terlebih dahulu untuk menyelesaikan tantangan!',
-        'error',
-      );
+  const handleCompleteChallenge = async () => {
+    if (!isLoggedIn) {
+      showNotification('Silakan login terlebih dahulu!', 'error');
       router.push('/login');
       return;
     }
 
+    const token = localStorage.getItem('accessToken');
+    setIsSubmitting(true);
+
     try {
       const response = await fetch(
-        'http://127.0.0.1:8000/api/v1/complete-action/',
+        'http://127.0.0.1:8000/api/v1/complete-weekly-challenge/',
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Token ${token}`,
+            'Authorization': `Token ${token}`,
           },
-          body: JSON.stringify({ points: points, action_id: challengeId }),
-        },
+          body: JSON.stringify({
+            points: challenge.points,
+            challenge_id: challenge.id,
+          }),
+        }
       );
 
       const result = await response.json();
-      if (!response.ok)
-        throw new Error(result.error || 'Gagal memperbarui skor.');
-
-      addScore(points, challengeId);
-      showNotification('Selamat! Poin berhasil ditambahkan.', 'success');
-
-      if (result.new_badges_awarded && result.new_badges_awarded.length > 0) {
-        const badge = result.new_badges_awarded[0];
-        showNotification(
-          `Luar biasa! Anda mendapatkan lencana baru: ${badge.name}`,
-          'success',
-        );
+      if (!response.ok) {
+        throw new Error(result.error || 'Gagal menyelesaikan tantangan.');
       }
-    } catch (err) {
-      if (err instanceof Error) {
-        showNotification(`Error: ${err.message}`, 'error');
+
+      showNotification('Selamat! Tantangan berhasil diselesaikan.', 'success');
+      
+      if (token) {
+        fetchUserData(token);
       }
+
+    } catch (err: any) {
+      showNotification(`Error: ${err.message}`, 'error');
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  return (
+    <div className="p-[1px] bg-gradient-to-r from-green-400/30 to-cyan-400/30 rounded-2xl h-full">
+      <div className="bg-gray-900/80 backdrop-blur-lg p-6 rounded-2xl h-full flex flex-col justify-between text-center">
+        <div>
+          <p className="text-cyan-400 font-semibold text-lg">{challenge.title}</p>
+          <p className="text-xl my-4">{challenge.description}</p>
+        </div>
+        <button
+          onClick={handleCompleteChallenge}
+          disabled={isCompleted || isSubmitting}
+          className={`font-bold py-2 px-6 rounded-md text-white transition-all duration-300 mt-4 ${
+            isCompleted
+              ? 'bg-gray-600 cursor-not-allowed flex items-center justify-center gap-2'
+              : 'bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-600 hover:to-cyan-600'
+          }`}
+        >
+          {isCompleted ? (
+            <><FaCheckCircle /> Selesai</>
+          ) : (
+            isSubmitting ? 'Memproses...' : `Selesaikan (+${challenge.points} Poin)`
+          )}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+
+// -- KOMPONEN UTAMA HALAMAN BERANDA --
+export default function Home() {
+  const { isLoggedIn, logout } = useGamification();
 
   return (
     <div className="min-h-screen">
@@ -136,6 +164,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      
       {/* Hero Section */}
       <main className="relative flex flex-col items-center justify-center min-h-screen pt-16 md:pt-20 lg:pt-24 overflow-hidden">
         <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -456,39 +485,9 @@ export default function Home() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {weeklyChallenges.map((challenge) => {
-              const isCompleted = completedChallenges.includes(challenge.id);
-              return (
-                <div
-                  key={challenge.id}
-                  className="p-[1px] bg-gradient-to-r from-green-400/30 to-cyan-400/30 rounded-2xl h-full"
-                >
-                  <div className="bg-gray-900/80 backdrop-blur-lg p-6 rounded-2xl h-full flex flex-col justify-between text-center">
-                    <div>
-                      <p className="text-cyan-400 font-semibold text-lg">
-                        {challenge.title}
-                      </p>
-                      <p className="text-xl my-4">{challenge.description}</p>
-                    </div>
-                    <button
-                      onClick={() =>
-                        handleCompleteChallenge(challenge.id, challenge.points)
-                      }
-                      disabled={isCompleted}
-                      className={`font-bold py-2 px-6 rounded-md text-white transition-all duration-300 mt-4 ${
-                        isCompleted
-                          ? 'bg-gray-600 cursor-not-allowed'
-                          : 'bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-600 hover:to-cyan-600'
-                      }`}
-                    >
-                      {isCompleted
-                        ? 'Selesai'
-                        : `Selesaikan (+${challenge.points} Poin)`}
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+            {weeklyChallenges.map((challenge) => (
+              <ChallengeCard key={challenge.id} challenge={challenge} />
+            ))}
           </div>
         </div>
       </section>
