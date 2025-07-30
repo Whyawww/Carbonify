@@ -3,6 +3,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
+    CompleteWeeklyChallengeView,
     GoogleLoginView,
     CarbonCalculatorView, 
     ActionViewSet, 
@@ -39,6 +40,7 @@ urlpatterns = [
     path('leaderboard/', LeaderboardView.as_view(), name='leaderboard'),
     path('complete-action/', CompleteActionView.as_view(), name='complete-action'),
     path('log-action/', LogInputActionView.as_view(), name='log-action'), # Untuk aksi nyata (PERBAIKAN DI SINI)
+    path('complete-weekly-challenge/', CompleteWeeklyChallengeView.as_view(), name='complete-weekly-challenge'),
     
     # Endpoint untuk Fitur Lainnya
     path('calculate/', CarbonCalculatorView.as_view(), name='calculate_carbon'),
