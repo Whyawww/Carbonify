@@ -6,7 +6,8 @@ import { useNotification } from '@/context/NotificationContext';
 import { FaArrowRight, FaCoins } from 'react-icons/fa';
 
 export default function RedeemPage() {
-  const { score, reduceScore } = useGamification();
+  const { profile, reduceScore } = useGamification();
+  const score = profile?.score || 0;
   const { showNotification } = useNotification();
   const [pointsToRedeem, setPointsToRedeem] = useState(10000);
 

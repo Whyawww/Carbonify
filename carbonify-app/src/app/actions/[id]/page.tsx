@@ -59,7 +59,7 @@ export default function ActionDetailPage({
     async function fetchActionDetail() {
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/api/v1/actions/${id}/`
+          `http://127.0.0.1:8000/api/v1/actions/${id}/`,
         );
         if (!response.ok) {
           throw new Error('Gagal mengambil data aksi.');
@@ -101,14 +101,14 @@ export default function ActionDetailPage({
     action.impact_level === 'Tinggi'
       ? 'text-red-400'
       : action.impact_level === 'Sedang'
-      ? 'text-yellow-400'
-      : 'text-green-400';
+        ? 'text-yellow-400'
+        : 'text-green-400';
   const effortColor =
     action.effort_level === 'Sulit'
       ? 'text-red-400'
       : action.effort_level === 'Sedang'
-      ? 'text-yellow-400'
-      : 'text-green-400';
+        ? 'text-yellow-400'
+        : 'text-green-400';
 
   const links = action.related_links
     ?.split('\n')

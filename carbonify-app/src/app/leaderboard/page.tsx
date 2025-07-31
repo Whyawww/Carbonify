@@ -92,25 +92,27 @@ export default function LeaderboardPage() {
                 {leaderboardData.map((user, index) => (
                   <li
                     key={user.username}
-                    className={`flex items-center justify-between p-4 rounded-lg transition-all duration-300 transform hover:scale-[1.03] border-l-4 ${index === 0
+                    className={`flex items-center justify-between p-4 rounded-lg transition-all duration-300 transform hover:scale-[1.03] border-l-4 ${
+                      index === 0
                         ? 'bg-gradient-to-r from-yellow-500/30 to-gray-900/10 border-yellow-400 shadow-lg shadow-yellow-400/20 hover:shadow-yellow-400/40'
                         : index === 1
                           ? 'bg-gradient-to-r from-slate-400/30 to-gray-900/10 border-slate-300 shadow-lg shadow-slate-300/20 hover:shadow-slate-300/40'
                           : index === 2
                             ? 'bg-gradient-to-r from-amber-700/30 to-gray-900/10 border-amber-600 shadow-lg shadow-amber-600/20 hover:shadow-amber-600/40'
                             : 'bg-gray-800/40 border-transparent hover:bg-gray-700/60 hover:border-cyan-400'
-                      }`}
+                    }`}
                   >
                     <div className="flex items-center space-x-4">
                       <span
-                        className={`font-bold text-lg w-10 h-10 flex items-center justify-center rounded-full ${index === 0
+                        className={`font-bold text-lg w-10 h-10 flex items-center justify-center rounded-full ${
+                          index === 0
                             ? 'bg-yellow-400 text-gray-900'
                             : index === 1
                               ? 'bg-gray-300 text-gray-900'
                               : index === 2
                                 ? 'bg-amber-600 text-white'
                                 : 'bg-gray-700'
-                          }`}
+                        }`}
                       >
                         {index + 1}
                       </span>

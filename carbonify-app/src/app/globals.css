@@ -6,9 +6,11 @@ body {
     Warna tengah adalah teal gelap (#03505a) dan memudar menjadi hitam pekat.
   */
   background-color: #000;
-  background-image: radial-gradient(circle at 50% 50%,
-      rgba(3, 80, 90, 0.5) 0%,
-      rgba(0, 0, 0, 0) 70%);
+  background-image: radial-gradient(
+    circle at 50% 50%,
+    rgba(3, 80, 90, 0.5) 0%,
+    rgba(0, 0, 0, 0) 70%
+  );
   background-attachment: fixed;
   /* Membuat background tidak ikut scroll */
   color: white;

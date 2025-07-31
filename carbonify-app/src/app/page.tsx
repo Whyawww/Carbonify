@@ -12,7 +12,11 @@ import { useNotification } from '@/context/NotificationContext';
 import { FaCheckCircle } from 'react-icons/fa';
 import { useState } from 'react';
 
-const ChallengeCard = ({ challenge }: { challenge: typeof weeklyChallenges[0] }) => {
+const ChallengeCard = ({
+  challenge,
+}: {
+  challenge: (typeof weeklyChallenges)[0];
+}) => {
   const { isLoggedIn, profile, fetchUserData } = useGamification();
   const { showNotification } = useNotification();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,13 +41,13 @@ const ChallengeCard = ({ challenge }: { challenge: typeof weeklyChallenges[0] })
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Token ${token}`,
+            Authorization: `Token ${token}`,
           },
           body: JSON.stringify({
             points: challenge.points,
             challenge_id: challenge.id,
           }),
-        }
+        },
       );
 
       const result = await response.json();
@@ -52,16 +56,18 @@ const ChallengeCard = ({ challenge }: { challenge: typeof weeklyChallenges[0] })
       }
 
       showNotification('Selamat! Tantangan berhasil diselesaikan.', 'success');
-      
+
       if (token) {
         fetchUserData(token);
       }
-
     } catch (err) {
       if (err instanceof Error) {
         showNotification('Error: ${err.message}', 'error');
       } else {
-        showNotification('Terjadi kesalahan saat menyelesaikan tantangan.', 'error');
+        showNotification(
+          'Terjadi kesalahan saat menyelesaikan tantangan.',
+          'error',
+        );
       }
     } finally {
       setIsSubmitting(false);
@@ -72,7 +78,9 @@ const ChallengeCard = ({ challenge }: { challenge: typeof weeklyChallenges[0] })
     <div className="p-[1px] bg-gradient-to-r from-green-400/30 to-cyan-400/30 rounded-2xl h-full">
       <div className="bg-gray-900/80 backdrop-blur-lg p-6 rounded-2xl h-full flex flex-col justify-between text-center">
         <div>
-          <p className="text-cyan-400 font-semibold text-lg">{challenge.title}</p>
+          <p className="text-cyan-400 font-semibold text-lg">
+            {challenge.title}
+          </p>
           <p className="text-xl my-4">{challenge.description}</p>
         </div>
         <button
@@ -85,16 +93,19 @@ const ChallengeCard = ({ challenge }: { challenge: typeof weeklyChallenges[0] })
           }`}
         >
           {isCompleted ? (
-            <><FaCheckCircle /> Selesai</>
+            <>
+              <FaCheckCircle /> Selesai
+            </>
+          ) : isSubmitting ? (
+            'Memproses...'
           ) : (
-            isSubmitting ? 'Memproses...' : `Selesaikan (+${challenge.points} Poin)`
+            `Selesaikan (+${challenge.points} Poin)`
           )}
         </button>
       </div>
     </div>
   );
 };
-
 
 // -- KOMPONEN UTAMA HALAMAN BERANDA --
 export default function Home() {
@@ -108,7 +119,8 @@ export default function Home() {
           autoPlay
           loop
           muted
-          className="absolute top-0 left-0 z-0 h-full w-full object-cover">
+          className="absolute top-0 left-0 z-0 h-full w-full object-cover"
+        >
           <source src="video/videobg.mp4" type="video/mp4" />
         </video>
 
@@ -133,19 +145,26 @@ export default function Home() {
                 <h3 className="text-2xl font-bold text-white">
                   Selamat Datang Kembali!
                 </h3>
-                <p className="text-gray-300">Lanjutkan perjalanan Anda untuk menjadi pahlawan iklim.</p>
+                <p className="text-gray-300">
+                  Lanjutkan perjalanan Anda untuk menjadi pahlawan iklim.
+                </p>
                 <div className="flex justify-center pt-2">
                   <button
                     onClick={logout}
-                    className="font-bold py-3 px-8 rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors">
+                    className="font-bold py-3 px-8 rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors"
+                  >
                     Keluar
                   </button>
                 </div>
               </div>
             ) : (
               <div className="text-center space-y-4">
-                <h3 className="text-2xl font-bold text-white">Mulai Perjalanan Anda</h3>
-                <p className="text-gray-300">Login dengan akun Google untuk menyimpan progres Anda.</p>
+                <h3 className="text-2xl font-bold text-white">
+                  Mulai Perjalanan Anda
+                </h3>
+                <p className="text-gray-300">
+                  Login dengan akun Google untuk menyimpan progres Anda.
+                </p>
                 <div className="flex justify-center pt-2">
                   <GoogleLoginButton />
                 </div>
@@ -154,7 +173,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      
+
       {/* Hero Section */}
       <main className="relative flex flex-col items-center justify-center min-h-screen pt-16 md:pt-20 lg:pt-24 overflow-hidden">
         <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center">

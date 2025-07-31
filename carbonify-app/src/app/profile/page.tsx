@@ -31,10 +31,10 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const LottieRobot = useMemo(() => dynamic(
-    () => import('@/components/LottieRobot'),
-    { ssr: false }
-  ), []);
+  const LottieRobot = useMemo(
+    () => dynamic(() => import('@/components/LottieRobot'), { ssr: false }),
+    [],
+  );
 
   const fetchProfileData = useCallback(async () => {
     setLoading(true);
@@ -140,4 +140,3 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
-

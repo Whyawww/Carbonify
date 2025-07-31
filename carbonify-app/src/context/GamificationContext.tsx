@@ -11,7 +11,6 @@ import {
 import { useRouter } from 'next/navigation';
 import { useNotification } from '@/context/NotificationContext';
 
-// Definisikan tipe data profil yang lengkap untuk digunakan di seluruh aplikasi
 interface ProfileData {
   user: {
     first_name: string;
@@ -29,9 +28,10 @@ interface ProfileData {
 
 interface GamificationContextType {
   isLoggedIn: boolean;
-  profile: ProfileData | null; // Simpan seluruh data profil dalam satu objek
+  profile: ProfileData | null;
   fetchUserData: (token: string) => Promise<void>;
   logout: () => void;
+  reduceScore: (points: number) => void;
 }
 
 const GamificationContext = createContext<GamificationContextType | undefined>(
@@ -48,29 +48,30 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('accessToken');
     setProfile(null);
     setIsLoggedIn(false);
-    // Redirect ke home setelah logout
     router.push('/');
   }, [router]);
 
-  const fetchUserData = useCallback(async (token: string) => {
-    try {
-      const response = await fetch('http://127.0.0.1:8000/api/v1/profile/', {
-        headers: { Authorization: `Token ${token}` },
-        cache: 'no-store', // Selalu ambil data terbaru dari server
-      });
-      if (!response.ok) {
-        throw new Error('Sesi tidak valid, harap login kembali.');
+  const fetchUserData = useCallback(
+    async (token: string) => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/v1/profile/', {
+          headers: { Authorization: `Token ${token}` },
+          cache: 'no-store',
+        });
+        if (!response.ok) {
+          throw new Error('Sesi tidak valid, harap login kembali.');
+        }
+        const data: ProfileData = await response.json();
+        setProfile(data);
+        setIsLoggedIn(true);
+      } catch (error) {
+        console.error(error);
+        logout();
       }
-      const data: ProfileData = await response.json();
-      setProfile(data);
-      setIsLoggedIn(true);
-    } catch (error) {
-      console.error(error);
-      logout(); // Logout jika token tidak valid atau ada error
-    }
-  }, [logout]);
+    },
+    [logout],
+  );
 
-  // Efek ini hanya berjalan sekali saat aplikasi pertama kali dimuat
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (token) {
@@ -79,11 +80,20 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
   }, [fetchUserData]);
 
   const handleLogoutConfirmation = () => {
-     if (window.confirm('Apakah Anda yakin ingin keluar?')) {
-       logout();
-       showNotification('Anda berhasil keluar.', 'success');
-     }
-  }
+    if (window.confirm('Apakah Anda yakin ingin keluar?')) {
+      logout();
+      showNotification('Anda berhasil keluar.', 'success');
+    }
+  };
+
+  const reduceScore = (points: number) => {
+    if (profile) {
+      setProfile({
+        ...profile,
+        score: Math.max(0, profile.score - points),
+      });
+    }
+  };
 
   return (
     <GamificationContext.Provider
@@ -91,7 +101,8 @@ export const GamificationProvider = ({ children }: { children: ReactNode }) => {
         isLoggedIn,
         profile,
         fetchUserData,
-        logout: handleLogoutConfirmation, // Gunakan fungsi konfirmasi
+        reduceScore,
+        logout: handleLogoutConfirmation,
       }}
     >
       {children}

@@ -18,7 +18,7 @@ const LottieRobot = () => {
     };
   }, []);
 
-  const rotationY = (mousePosition.x / window.innerWidth - 0.5) * 30; 
+  const rotationY = (mousePosition.x / window.innerWidth - 0.5) * 30;
   const rotationX = (0.5 - mousePosition.y / window.innerHeight) * 20;
 
   return (
