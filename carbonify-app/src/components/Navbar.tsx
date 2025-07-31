@@ -10,7 +10,7 @@ import {
   FaIdCard,
   FaSignOutAlt,
   FaGift,
-} from 'react-icons/fa'; // Menambahkan ikon baru
+} from 'react-icons/fa';
 import Image from 'next/image';
 import { useGamification } from '@/context/GamificationContext';
 
@@ -19,7 +19,11 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const { score, isLoggedIn, avatarUrl, logout } = useGamification();
+  
+  // --- BAGIAN YANG DIPERBAIKI ---
+  // Ambil 'profile' object, bukan 'score' dan 'avatarUrl' secara terpisah
+  const { profile, isLoggedIn, logout } = useGamification();
+  // -----------------------------
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -65,7 +69,7 @@ const Navbar = () => {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative hover:text-gray-200 transition-colors ${
+                className={`relative hover:text-green-200 transition-colors ${
                   isActive
                     ? 'font-semibold bg-gradient-to-r from-green-400 to-cyan-400 text-transparent bg-clip-text'
                     : ''
@@ -82,15 +86,15 @@ const Navbar = () => {
 
         {/* Profile Dropdown atau Tombol Masuk */}
         <div className="hidden md:flex items-center">
-          {isLoggedIn ? (
+          {isLoggedIn && profile ? ( // Pastikan profile tidak null
             <div className="relative">
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="flex items-center space-x-2 bg-gray-800/50 p-1 rounded-full hover:bg-gray-700/70"
+                className="flex items-center space-x-2 bg-green-700/50 p-1 rounded-full hover:bg-green-400/70"
               >
-                {avatarUrl ? (
+                {profile.avatar_url ? (
                   <Image
-                    src={avatarUrl}
+                    src={profile.avatar_url}
                     alt="Foto Profil"
                     width={32}
                     height={32}
@@ -101,11 +105,10 @@ const Navbar = () => {
                 )}
               </button>
               {isProfileOpen && (
-                <div className="absolute top-12 right-0 w-48 bg-gray-800 border border-gray-600 rounded-xl shadow-lg p-2 space-y-1 z-50 animate-dropdown">
-                  <div className="px-2 py-1 text-sm text-gray-400 border-b border-gray-700 mb-1">
-                    Poin: <strong>{score}</strong>
+                <div className="absolute top-12 right-0 w-48 bg-transparent backdrop-blur-md border border-green-600 rounded-xl shadow-lg p-2 space-y-1 z-50 animate-fade">
+                  <div className="px-2 py-1 text-sm text-gray-400 border-b border-green-700 mb-1">
+                    Poin: <strong>{profile.score}</strong>
                   </div>
-                  {/* --- PERUBAHAN DI SINI (DESKTOP) --- */}
                   <Link
                     href="/profile"
                     className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-blue-600"
@@ -120,7 +123,7 @@ const Navbar = () => {
                     <FaGift />
                     <span>Tukarkan Poin</span>
                   </Link>
-                  <div className="pt-1 border-t border-gray-700">
+                  <div className="pt-1 border-t border-green-700">
                     <button
                       onClick={logout}
                       className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-red-600"
@@ -129,7 +132,6 @@ const Navbar = () => {
                       <span>Keluar</span>
                     </button>
                   </div>
-                  {/* --- AKHIR PERUBAHAN --- */}
                 </div>
               )}
             </div>
@@ -166,17 +168,16 @@ const Navbar = () => {
               {link.label}
             </Link>
           ))}
-          <div className="pt-4 mt-2 border-t border-gray-600 w-4/5 text-center space-y-4">
-            {isLoggedIn ? (
+          <div className="pt-4 mt-2 border-t border-green-600 w-4/5 text-center space-y-4">
+            {isLoggedIn && profile ? (
               <>
-                {/* --- PERUBAHAN DI SINI (MOBILE) --- */}
                 <Link
                   href="/profile"
                   className="flex items-center justify-center space-x-2 text-xl font-medium text-white"
                 >
-                  {avatarUrl ? (
+                  {profile.avatar_url ? (
                     <Image
-                      src={avatarUrl}
+                      src={profile.avatar_url}
                       alt="Foto Profil"
                       width={32}
                       height={32}
@@ -188,9 +189,8 @@ const Navbar = () => {
                   <span>Lihat Profil</span>
                 </Link>
                 <Link href="/redeem" className="text-xl font-medium text-white">
-                  Tukarkan Poin
+                  Tukarkan Poin ({profile.score})
                 </Link>
-                {/* --- AKHIR PERUBAHAN --- */}
                 <button
                   onClick={logout}
                   className="block w-full bg-red-500 hover:bg-red-600 text-white text-center font-bold py-3 rounded-lg transition"
