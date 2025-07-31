@@ -49,6 +49,14 @@ const Footer = () => {
                 Peta Lokal
               </Link>
             </li>
+            <li>
+              <Link
+                href="/leaderboard"
+                className="hover:text-green-400 transition-colors"
+              >
+                Papan Peringkat
+              </Link>
+            </li>
           </ul>
         </div>
 

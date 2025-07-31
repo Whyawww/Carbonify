@@ -99,7 +99,7 @@ export default function MapPage() {
   return (
     <div className="min-h-screen pt-32 pb-20">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold text-center mb-2">Peta Aksi Lokal</h1>
+        <h1 className="text-4xl md:text-5xl font-bold text-center mb-2 bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-cyan-400">Peta Aksi Lokal</h1>
         <TypeAnimation
           sequence={['Temukan lokasi ramah lingkungan di sekitarmu.', 2000]}
           wrapper="p"

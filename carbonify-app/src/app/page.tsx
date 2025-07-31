@@ -99,68 +99,55 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <section className="pt-12 md:pt-16 lg:pt-30 md:flex md:flex-row md:justify-center md:items-center md:gap-10 mt-10">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-18">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            {/* Kolom Kiri*/}
-            <div className="text-center lg:text-left">
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">
-                Bergabunglah dengan Gerakan Kami
-              </h2>
-              <p className="text-lg text-gray-400 leading-relaxed">
-                Carbonify adalah platform web interaktif yang dirancang untuk
-                meningkatkan kesadaran masyarakat terhadap emisi karbon pribadi
-                dan mendorong aksi nyata dalam menghadapi perubahan iklim.
-                Proyek ini dikembangkan sebagai solusi inovatif berbasis
-                teknologi untuk mendukung pencapaian Sustainable Development
-                Goals (SDGs), khususnya dalam konteks keberlanjutan lingkungan
-                dan transformasi digital di Indonesia.
-              </p>
-              <p className="text-lg text-gray-400 leading-relaxed">
-                Dengan membuat akun, Anda dapat melacak progres, mendapatkan
-                poin dari setiap aksi, dan melihat peringkat Anda di papan
-                peringkat pahlawan iklim. Jadilah bagian dari perubahan positif
-                hari ini.
-              </p>
-            </div>
+      <section className="relative flex h-screen items-center justify-center">
+        {/* Bg Video */}
+        <video
+          autoPlay
+          loop
+          muted
+          className="absolute top-0 left-0 z-0 h-full w-full object-cover">
+          <source src="video/videobg.mp4" type="video/mp4" />
+        </video>
 
-            {/* Kolom Kanan*/}
-            <div className="h-full flex items-center justify-center p-[2px] bg-gradient-to-r from-green-400/30 to-cyan-400/30 rounded-2xl w-full max-w-xl mx-auto ">
-              <div className="h-full bg-gray-900/80 backdrop-blur-lg p-8 rounded-2xl text-center space-y-4 flex flex-col justify-center">
-                {isLoggedIn ? (
-                  <>
-                    <h3 className="text-2xl font-bold text-white">
-                      Selamat Datang Kembali!
-                    </h3>
-                    <p className="text-gray-400">
-                      Anda sudah masuk. Lanjutkan perjalanan Anda untuk menjadi
-                      pahlawan iklim.
-                    </p>
-                    <div className="flex justify-center pt-2">
-                      <button
-                        onClick={logout}
-                        className="font-bold py-3 px-8 rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors"
-                      >
-                        Keluar
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <h3 className="text-2xl font-bold text-white">
-                      Mulai Perjalanan Anda
-                    </h3>
-                    <p className="text-gray-400">
-                      Login dengan akun Google untuk menyimpan progres dan
-                      mendapatkan poin.
-                    </p>
-                    <div className="flex justify-center pt-2">
-                      <GoogleLoginButton />
-                    </div>
-                  </>
-                )}
+        {/* Overlay  */}
+        <div className="absolute top-0 left-0 z-10 h-full w-full bg-black/50"></div>
+
+        {/* Tengah */}
+        <div className="relative z-20 flex flex-col items-center justify-center text-center text-white p-4">
+          <h2 className="text-4xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent pb-2">
+            Bergabunglah dengan Gerakan Kami
+          </h2>
+          <p className="text-lg max-w-4xl text-gray-200 leading-relaxed">
+            Lacak jejak karbon Anda dan ambil aksi nyata untuk iklim. Jadilah
+            bagian dari perubahan, dapatkan poin, dan puncaki papan peringkat
+            pahlawan iklim.
+          </p>
+
+          {/* Login */}
+          <div className="mt-8">
+            {isLoggedIn ? (
+              <div className="text-center space-y-4">
+                <h3 className="text-2xl font-bold text-white">
+                  Selamat Datang Kembali!
+                </h3>
+                <p className="text-gray-300">Lanjutkan perjalanan Anda untuk menjadi pahlawan iklim.</p>
+                <div className="flex justify-center pt-2">
+                  <button
+                    onClick={logout}
+                    className="font-bold py-3 px-8 rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors">
+                    Keluar
+                  </button>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="text-center space-y-4">
+                <h3 className="text-2xl font-bold text-white">Mulai Perjalanan Anda</h3>
+                <p className="text-gray-300">Login dengan akun Google untuk menyimpan progres Anda.</p>
+                <div className="flex justify-center pt-2">
+                  <GoogleLoginButton />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
