@@ -12,7 +12,6 @@ import { useNotification } from '@/context/NotificationContext';
 import { FaCheckCircle } from 'react-icons/fa';
 import { useState } from 'react';
 
-// -- KOMPONEN BARU UNTUK KARTU TANTANGAN --
 const ChallengeCard = ({ challenge }: { challenge: typeof weeklyChallenges[0] }) => {
   const { isLoggedIn, profile, fetchUserData } = useGamification();
   const { showNotification } = useNotification();
@@ -58,8 +57,12 @@ const ChallengeCard = ({ challenge }: { challenge: typeof weeklyChallenges[0] })
         fetchUserData(token);
       }
 
-    } catch (err: any) {
-      showNotification(`Error: ${err.message}`, 'error');
+    } catch (err) {
+      if (err instanceof Error) {
+        showNotification('Error: ${err.message}', 'error');
+      } else {
+        showNotification('Terjadi kesalahan saat menyelesaikan tantangan.', 'error');
+      }
     } finally {
       setIsSubmitting(false);
     }

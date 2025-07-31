@@ -80,6 +80,9 @@ const ProfilePage = () => {
 
   return (
     <div className="bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text min-h-screen w-full pt-32 pb-20 relative overflow-hidden p-4 sm:p-6 lg:p-30 text-white">
+      <div className="absolute top-0 right-0">
+        <LottieRobot />
+      </div>
       <div className="max-w-4xl mx-auto relative z-10 container">
         <div className="flex justify-end mb-4">
           <button
@@ -132,9 +135,9 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
-      <LottieRobot />
     </div>
   );
 };
 
 export default ProfilePage;
+

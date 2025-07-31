@@ -45,7 +45,7 @@ export default function LeaderboardPage() {
   return (
     <div className="min-h-screen w-full pt-32 pb-20">
       <div className="container mx-auto px-4 max-w-4xl">
-        <h1 className="text-4xl md:text-5xl font-bold text-center mb-2 bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-cyan-400">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-2 bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-cyan-400">
           Pahlawan Iklim
         </h1>
         <p className="text-center text-gray-400 mb-16 text-lg">
@@ -54,8 +54,8 @@ export default function LeaderboardPage() {
         </p>
 
         {/* Kartu Informasi Peringkat */}
-        <div className="relative mb-12 bg-gray-900/50 border border-green-500/30 rounded-2xl p-6 pl-28 md:pl-44 shadow-lg shadow-green-500/20 hover:shadow-green-400/40 hover:scale-[1.02] transition-all duration-300">
-          <div className="absolute -top-12 left-0 md:-left-8 w-36 h-36 md:w-52 md:h-52">
+        <div className="relative mt-16 mb-12 bg-gray-900/50 border border-green-500/30 rounded-2xl p-6 text-center md:text-left md:pl-44 shadow-lg shadow-green-500/20 hover:shadow-green-400/40 hover:scale-[1.02] transition-all duration-300">
+          <div className="absolute -top-24 left-1/2 -translate-x-1/2 md:top-15 md:left-20 md:transform-none md:-translate-y-1/2 w-36 h-36 md:w-52 md:h-52">
             <Image
               src="/Piala.png"
               alt="Piala Leaderboard"

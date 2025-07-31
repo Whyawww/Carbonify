@@ -170,3 +170,16 @@ class FaktorEmisiBahanBakar(models.Model):
     class Meta:
         verbose_name = "Faktor Emisi Bahan Bakar"
         verbose_name_plural = "Faktor Emisi Bahan Bakar"
+
+class ChallengeCompletion(models.Model):
+    user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='completions')
+    action = models.ForeignKey(Action, on_delete=models.CASCADE)
+    proof_image = models.ImageField(upload_to='proofs/')
+    completed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # Memastikan user hanya bisa menyelesaikan satu tantangan satu kali
+        unique_together = ('user_profile', 'action')
+
+    def __str__(self):
+        return f'{self.user_profile.user.username} - {self.action.title}'

@@ -8,6 +8,7 @@ from django_filters.rest_framework import FilterSet, CharFilter
 from django.contrib.auth.models import User
 from django.conf import settings 
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
 
 # Import untuk verifikasi Google
 from google.oauth2 import id_token
@@ -17,7 +18,7 @@ import requests
 from math import radians, sin, cos, sqrt, atan2
 from .models import (
     Action, ActivityLog, EcoPoint, FaktorEmisiBahanBakar,
-    FaktorEmisiListrik, FaktorEmisiTransportasi, FaktorEmisiMakanan, UserProfile
+    FaktorEmisiListrik, FaktorEmisiTransportasi, FaktorEmisiMakanan, UserProfile, ChallengeCompletion 
 )
 from .serializers import (
     ActionSerializer, EcoPointSerializer, FaktorEmisiBahanBakarSerializer,
@@ -275,6 +276,7 @@ def check_and_award_badges(profile):
 # View untuk menyelesaikan aksi
 class CompleteActionView(APIView):
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request, *args, **kwargs):
         print("="*50)
@@ -285,12 +287,13 @@ class CompleteActionView(APIView):
         print("="*50)
 
         action_id_str = request.data.get('action_id')
+        proof_image = request.FILES.get('proof_image')
 
         print(f"Mencoba mendapatkan 'action_id': {action_id_str}")
         
-        if not action_id_str:
+        if not action_id_str or not proof_image:
             return Response(
-                {'error': 'ID Aksi (action_id) harus disertakan.'}, 
+                {'error': 'action_id dan bukti gambar (proof_image) harus disertakan.'}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
         
@@ -303,11 +306,16 @@ class CompleteActionView(APIView):
             profile, created = UserProfile.objects.get_or_create(user=request.user)
 
             # 4. Periksa apakah ID angka sudah ada di daftar
-            if action_id_str in profile.completed_challenges:
-                return Response(
-                    {'error': 'Aksi ini sudah pernah Anda selesaikan.'}, 
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+            if ChallengeCompletion.objects.filter(user_profile=profile, action=action_to_complete).exists():
+                return Response({'error': 'Aksi ini sudah pernah Anda selesaikan.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Buat entri penyelesaian baru
+            ChallengeCompletion.objects.create(
+                user_profile=profile,
+                action=action_to_complete,
+                proof_image=proof_image
+            )
+            
             profile.score += points_to_add
             profile.completed_challenges.append(action_id_str) 
             
