@@ -3,8 +3,13 @@
 import { useState, useEffect } from 'react';
 import { TypeAnimation } from 'react-type-animation';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 
-// Tipe data untuk pilihan dari API
+export const metadata: Metadata = {
+  title: 'Kalkulator Jejak Karbon',
+  description: 'Hitung estimasi jejak karbon bulanan Anda dari aktivitas listrik, transportasi, dan konsumsi makanan dengan kalkulator Carbonify yang akurat.',
+};
+
 interface Choice {
   id: number;
   provinsi?: string;
@@ -13,7 +18,6 @@ interface Choice {
   jenis_bahan_bakar?: string;
 }
 
-// Tipe data untuk rincian emisi
 interface Breakdown {
   listrik: number;
   transportasi: number;
@@ -21,7 +25,6 @@ interface Breakdown {
   bahan_bakar: number;
 }
 
-// Tipe data untuk hasil analisis dari API
 interface AnalysisResult {
   exceeded_categories: string[];
   limit: number;
@@ -34,29 +37,27 @@ interface AnalysisResult {
 }
 
 export default function CalculatorPage() {
-  // State untuk nilai input, termasuk bahan bakar
   const [values, setValues] = useState({
     listrik_kwh: '',
     transportasi_km: '',
     makanan_porsi: '',
-    bahan_bakar_liter: '', // <-- DITAMBAHKAN
+    bahan_bakar_liter: '',
     listrik_id: '',
     transportasi_id: '',
     makanan_id: '',
-    bahan_bakar_id: '', // <-- DITAMBAHKAN
+    bahan_bakar_id: '',
   });
 
-  // State untuk pilihan dari API, termasuk bahan bakar
   const [choices, setChoices] = useState<{
     listrik: Choice[];
     transportasi: Choice[];
     makanan: Choice[];
-    bahan_bakar: Choice[]; // <-- DITAMBAHKAN
+    bahan_bakar: Choice[];
   }>({
     listrik: [],
     transportasi: [],
     makanan: [],
-    bahan_bakar: [], // <-- DITAMBAHKAN
+    bahan_bakar: [],
   });
 
   const [totalEmissions, setTotalEmissions] = useState<number | null>(null);
@@ -68,13 +69,12 @@ export default function CalculatorPage() {
   useEffect(() => {
     const fetchChoices = async () => {
       try {
-        // Fetch semua pilihan termasuk bahan bakar
         const [listrikRes, transRes, makananRes, bahanbakarRes] =
           await Promise.all([
             fetch('http://127.0.0.1:8000/api/v1/choices/listrik/'),
             fetch('http://127.0.0.1:8000/api/v1/choices/transportasi/'),
             fetch('http://127.0.0.1:8000/api/v1/choices/makanan/'),
-            fetch('http://127.0.0.1:8000/api/v1/choices/bahan-bakar/'), // <-- DITAMBAHKAN
+            fetch('http://127.0.0.1:8000/api/v1/choices/bahan-bakar/'),
           ]);
         if (
           !listrikRes.ok ||
@@ -88,8 +88,8 @@ export default function CalculatorPage() {
         const listrik = await listrikRes.json();
         const transportasi = await transRes.json();
         const makanan = await makananRes.json();
-        const bahan_bakar = await bahanbakarRes.json(); // <-- DITAMBAHKAN
-        setChoices({ listrik, transportasi, makanan, bahan_bakar }); // <-- DITAMBAHKAN
+        const bahan_bakar = await bahanbakarRes.json();
+        setChoices({ listrik, transportasi, makanan, bahan_bakar });
       } catch (err) {
         if (err instanceof Error) {
           setError(
@@ -141,16 +141,15 @@ export default function CalculatorPage() {
     setBreakdown(null);
     setAnalysis(null);
     setError(null);
-    // Reset semua nilai termasuk bahan bakar
     setValues({
       listrik_kwh: '',
       transportasi_km: '',
       makanan_porsi: '',
-      bahan_bakar_liter: '', // <-- DITAMBAHKAN
+      bahan_bakar_liter: '', 
       listrik_id: '',
       transportasi_id: '',
       makanan_id: '',
-      bahan_bakar_id: '', // <-- DITAMBAHKAN
+      bahan_bakar_id: '',
     });
   };
 

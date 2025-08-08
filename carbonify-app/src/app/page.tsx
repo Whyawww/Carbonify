@@ -11,6 +11,12 @@ import GoogleLoginButton from '@/components/GoogleLoginButton';
 import { useNotification } from '@/context/NotificationContext';
 import { FaCheckCircle } from 'react-icons/fa';
 import { useState } from 'react';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Tim Carbonify',
+  description: 'Inilah Tim Pahlwan Iklim Carbonify menuju bumi yang sehat.',
+};
 
 const ChallengeCard = ({
   challenge,

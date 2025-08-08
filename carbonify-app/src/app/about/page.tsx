@@ -1,7 +1,12 @@
 'use client';
 
 import { TypeAnimation } from 'react-type-animation';
+import type { Metadata } from 'next';
 
+export const metadata: Metadata = {
+  title: 'Carbonify',
+  description: 'Carbonify adalah sebuah platform yang dapat menghitung jejak karbonmu dengan akurat, anda juga bisa mendapatkan saldo dan juga masuk leaderboard kamu.',
+};
 export default function AboutPage() {
   return (
     <div className="min-h-screen w-full pt-32 pb-20">

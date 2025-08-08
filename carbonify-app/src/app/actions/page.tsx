@@ -4,8 +4,13 @@ import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { TypeAnimation } from 'react-type-animation';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 
-// Tipe data untuk Aksi
+export const metadata: Metadata = {
+  title: 'Aksi Nyata Iklim',
+  description: 'Hitung estimasi jejak karbon bulanan Anda dari aktivitas listrik, transportasi, dan konsumsi makanan dengan kalkulator Carbonify yang akurat.',
+};
+
 interface Action {
   id: number;
   emoji: string;
@@ -15,7 +20,6 @@ interface Action {
   image: string | null;
 }
 
-// Komponen Kartu Aksi yang bisa digunakan ulang
 const ActionCard = ({
   action,
   isHighlighted,
@@ -40,7 +44,6 @@ const ActionCard = ({
   </Link>
 );
 
-// Komponen utama untuk logika halaman
 function ActionsPageContent() {
   const searchParams = useSearchParams();
   const highlightParams = searchParams.get('highlight');

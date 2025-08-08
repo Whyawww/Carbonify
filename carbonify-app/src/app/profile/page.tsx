@@ -14,6 +14,12 @@ import BadgesGallery from './BadgesGallery';
 import dynamic from 'next/dynamic';
 import ActivityChart from './ActivityChart';
 import ActivityFeed from './ActivityFeed';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Profile',
+  description: 'Lihat hasil statistikmu dan lencana prestasi.',
+};
 
 interface ProfileData {
   user: { first_name: string; email: string; date_joined: string };

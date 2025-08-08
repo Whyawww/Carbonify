@@ -1,0 +1,13 @@
+// src/app/robots.ts
+import { MetadataRoute } from 'next';
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: {
+      userAgent: '*',
+      allow: '/',
+      disallow: ['/calculate/', '/redeem/', '/actions/', '/map/'], // Jangan index halaman profil & redeem
+    },
+    sitemap: https://www.greenifycarbon.tech/sitemap.xml',
+  };
+}

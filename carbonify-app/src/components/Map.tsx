@@ -10,6 +10,12 @@ import {
 } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import { useEffect } from 'react';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Lihat Peta Sehat Terdekat',
+  description: 'Ketahui disekitarmu ada lokasi untuk membuat bumi lebih sehat.',
+};
 
 interface EcoPoint {
   id: number;

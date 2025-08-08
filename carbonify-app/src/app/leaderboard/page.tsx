@@ -3,7 +3,12 @@
 import { useState, useEffect } from 'react';
 import { FaSpinner } from 'react-icons/fa';
 import Image from 'next/image';
+import type { Metadata } from 'next';
 
+export const metadata: Metadata = {
+  title: 'Pahlawan Iklim',
+  description: 'Jadilah Pahlawan Iklim di Carbonify agar Bumi Bisa Tersenyum',
+};
 interface LeaderboardEntry {
   username: string;
   score: number;
