@@ -1,22 +1,21 @@
 # 🌍 Carbonify - Jejak Karbon & Aksi Iklim
 
-**Carbonify** platform web interaktif yang dirancang untuk meningkatkan kesadaran masyarakat terhadap emisi karbon pribadi dan mendorong aksi nyata dalam menghadapi perubahan iklim. Proyek ini dikembangkan sebagai solusi inovatif berbasis teknologi untuk mendukung pencapaian **Sustainable Development Goals (SDGs)**, khususnya dalam konteks **keberlanjutan lingkungan dan transformasi digital di Indonesia**.".
+**Carbonify** adalah platform web interaktif yang dirancang untuk meningkatkan kesadaran masyarakat terhadap emisi karbon pribadi dan mendorong aksi nyata dalam menghadapi perubahan iklim. Proyek ini dikembangkan sebagai solusi inovatif berbasis teknologi untuk mendukung pencapaian **Sustainable Development Goals (SDGs)**, khususnya dalam konteks **keberlanjutan lingkungan dan transformasi digital di Indonesia**.
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Site-green?style=for-the-badge)](https://www.greenifycarbon.tech/) 
 
-
-![Carbonify Screenshot](carbonify-app/public/Tampilan.png) 
+![Carbonify Screenshot](carbonify-app/public/Tampilan.png)
 
 ---
 
 ## ✨ Fitur Utama
 
--   **Desain Futuristik**: Antarmuka modern dengan tema Aurora GeoGlow dan efek cahaya kursor yang interaktif.
--   **Kalkulator Karbon Dinamis**: Menghitung emisi berdasarkan data spesifik (lokasi, jenis kendaraan, dll) yang terhubung dengan backend Django.
--   **Gamifikasi**: Sistem poin dan leaderboard untuk memotivasi pengguna menyelesaikan tantangan ramah lingkungan.
--   **Otentikasi Google**: Kemudahan login dengan satu klik menggunakan akun Google.
--   **Peta Lokal Interaktif**: Peta berbasis Leaflet yang menunjukkan lokasi ramah lingkungan seperti bank sampah, thrift store, dll., dengan fitur pencarian dan filter radius.
--   **Desain Responsif**: Tampilan yang dioptimalkan untuk berbagai perangkat, dari desktop hingga mobile.
+-   **Desain Futuristik & Interaktif**: Antarmuka modern dengan tema Aurora, efek cahaya kursor, animasi daun jatuh, dan globe 3D interaktif di halaman utama.
+-   **Kalkulator Karbon Dinamis**: Menghitung estimasi emisi karbon bulanan berdasarkan data spesifik (lokasi, jenis kendaraan, bahan bakar, dll) yang terhubung langsung ke backend Django.
+-   **Gamifikasi & Keterlibatan Pengguna**: Sistem poin, lencana, dan tantangan mingguan dengan bukti unggah foto untuk memotivasi pengguna.
+-   **Papan Peringkat (Leaderboard)**: Menampilkan peringkat pengguna dengan skor tertinggi secara *real-time* untuk mendorong kompetisi yang sehat.
+-   **Otentikasi Google & Profil Pengguna**: Kemudahan login dengan satu klik menggunakan akun Google, lengkap dengan halaman profil personal yang menampilkan statistik, lencana, dan riwayat aksi.
+-   **Peta Lokal Interaktif**: Peta berbasis Leaflet yang menunjukkan lokasi ramah lingkungan (Bank Sampah, Thrift Store) dengan fitur pencarian dan filter radius.
 
 ---
 
@@ -61,10 +60,10 @@
         <br>Leaflet.js
     </td>
     <td align="center" width="96">
-      <a href="https://www.framer.com/motion/">
-        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/framermotion/framermotion-original.svg" alt="Framer Motion" width="65" height="65" />
+      <a href="https://lottiefiles.com/">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/lottie/lottie-original.svg" alt="Lottie" width="65" height="65" />
       </a>
-      <br>Framer Motion
+      <br>Lottie
     </td>
      <td align="center" width="96">
       <a href="https://prettier.io/">
@@ -79,7 +78,7 @@
 
 ## 🚀 Instalasi & Menjalankan Proyek
 
-Proyek ini terdiri dari dua bagian: **frontend (Next.js)** dan **backend (Django)**.
+Proyek ini terdiri dari dua bagian: **frontend (Next.js)** dan **backend (Django)**. Keduanya harus dijalankan secara bersamaan.
 
 ### Backend (Django)
 1.  **Masuk ke direktori backend:**
@@ -95,7 +94,11 @@ Proyek ini terdiri dari dua bagian: **frontend (Next.js)** dan **backend (Django
     ```bash
     pip install -r requirements.txt
     ```
-4.  **Jalankan server backend:**
+4.  **Jalankan migrasi database:**
+    ```bash
+    python manage.py migrate
+    ```
+5.  **Jalankan server backend:**
     ```bash
     python manage.py runserver
     ```
@@ -110,12 +113,14 @@ Proyek ini terdiri dari dua bagian: **frontend (Next.js)** dan **backend (Django
     ```bash
     npm install
     ```
-3.  **Jalankan server pengembangan:**
+3.  **Buat file `.env.local`** dan isi dengan Google Client ID Anda:
+    ```
+    NEXT_PUBLIC_GOOGLE_CLIENT_ID=YOUR_GOOGLE_CLIENT_ID
+    ```
+4.  **Jalankan server pengembangan:**
     ```bash
     npm run dev
     ```
     Frontend akan berjalan di `http://localhost:3000`.
 
 ---
-
-Dibuat dengan semangat untuk bumi yang lebih baik. 💚
