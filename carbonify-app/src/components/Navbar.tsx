@@ -19,7 +19,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  
+
   // --- BAGIAN YANG DIPERBAIKI ---
   // Ambil 'profile' object, bukan 'score' dan 'avatarUrl' secara terpisah
   const { profile, isLoggedIn, logout } = useGamification();
