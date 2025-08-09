@@ -139,7 +139,7 @@ export default function CalculatorPage() {
       listrik_kwh: '',
       transportasi_km: '',
       makanan_porsi: '',
-      bahan_bakar_liter: '', 
+      bahan_bakar_liter: '',
       listrik_id: '',
       transportasi_id: '',
       makanan_id: '',

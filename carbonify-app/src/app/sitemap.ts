@@ -28,7 +28,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.7,
     },
-     {
+    {
       url: `${baseUrl}/leaderboard`,
       lastModified: new Date(),
       changeFrequency: 'daily',
